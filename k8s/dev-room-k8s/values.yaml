@@ -1,0 +1,14 @@
+# environment - Dev, Test or Prod
+environment: Dev
+# whether the host control is enabled
+host_controller_enabled: True
+# port for the Service:
+web_service_port: 8080
+ssh_service_port: 22
+# type of the Service:
+service_type: LoadBalancer
+# name of cmd server
+cmd_server_name: dev-room-cmd-server
+# main persistent volume
+pv_name: dev-room-pv-main
+pv_capacity: 500Mi
