@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.cmd_server_name }}
+  labels:
+    dev-room: cmd-server
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}        
+      environment: {{ .Values.environment | lower }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+        environment: {{ .Values.environment | lower }}
+    spec:
+      containers:
+        - name: ubuntu-container
+          image: ubuntu:latest
+          env:
+          - name: ENVIRONMENT_LABEL
+            value: {{ .Values.environment | lower }}
+          volumeMounts:
+            - name: config
+              mountPath: "/app/config"
+              readOnly: true
+            - name: data
+              mountPath: /host
+          command:
+            - tail
+            - "-f"
+            - "/dev/null"
+      volumes:
+        - name: config
+          configMap:
+            name: {{ .Values.cmd_server_name }}-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Values.cmd_server_name }}-pv-claim

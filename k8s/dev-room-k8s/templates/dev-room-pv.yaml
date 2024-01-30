@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.pv_name }}
+spec:
+  capacity:
+    storage:  {{ .Values.pv_capacity }}
+  accessModes:
+    - ReadWriteMany
+  local:
+    path: /
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+          - key: storage
+            operator: In
+            values:
+              - {{ .Values.pv_name }}
