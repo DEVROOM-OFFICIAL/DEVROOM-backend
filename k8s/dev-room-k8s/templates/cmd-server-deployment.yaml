@@ -3,24 +3,19 @@ kind: Deployment
 metadata:
   name: {{ .Values.cmd_server_name }}
   labels:
-    dev-room: cmd-server
+    dev-room: {{ .Values.cmd_server_name }}
 spec:
   selector:
     matchLabels:
       app: {{ .Release.Name }}        
-      environment: {{ .Values.environment | lower }}
   template:
     metadata:
       labels:
         app: {{ .Release.Name }}
-        environment: {{ .Values.environment | lower }}
     spec:
       containers:
         - name: ubuntu-container
           image: ubuntu:latest
-          env:
-          - name: ENVIRONMENT_LABEL
-            value: {{ .Values.environment | lower }}
           volumeMounts:
             - name: config
               mountPath: "/app/config"
@@ -28,13 +23,19 @@ spec:
             - name: data
               mountPath: /host
           command:
-            - tail
-            - "-f"
-            - "/dev/null"
+            - "/bin/sh"
+            - "-c"
+            - |
+              echo "init cmd server"
+              cp -r /app/config /script
+              chmod +x /script/init.sh
+              /script/init.sh >> /script/init_log
+              tail -f /dev/null
+
       volumes:
         - name: config
           configMap:
             name: {{ .Values.cmd_server_name }}-config
         - name: data
           persistentVolumeClaim:
-            claimName: {{ .Values.cmd_server_name }}-pv-claim
+            claimName: {{ .Values.pv_name }}-claim
