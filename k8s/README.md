@@ -47,9 +47,9 @@ helm version
 ### 영구 볼륨을 위한 노드 레이블 배치 (정보 저장용)
 ```bash
 # 클러스터의 특정 노드에 레이블 부여
-kubectl label node $(kubectl get nodes -o jsonpath='{.items[0].metadata.name}') storage=dev-room-pv-main
+kubectl label node $(kubectl get nodes -o jsonpath='{.items[0].metadata.name}') storage=dev-room-pv
 # 레이블 셀렉터로 노드의 존재 확인
-kubectl get nodes -l storage=dev-room-pv-main
+kubectl get nodes -l storage=dev-room-pv
 ```
 
 ## 🚀 Helm 차트 실행
