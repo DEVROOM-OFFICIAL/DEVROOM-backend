@@ -8,6 +8,7 @@ spec:
   accessModes:
     - ReadWriteMany
   local:
+    # 시스템 파일의 전 권한을 가지게 되므로, 유의할 것
     path: /
   nodeAffinity:
     required:

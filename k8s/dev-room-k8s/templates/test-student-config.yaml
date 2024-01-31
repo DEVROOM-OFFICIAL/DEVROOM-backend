@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: student-{{ .Values.test_student_id }}-{{ .Values.test_class_id | lower }}-config
+  labels:
+    student_id: id-{{ .Values.test_student_id }}
+    class_id: id-{{ .Values.test_class_id }}
+data:
+  # 전체 스크립트 관리
+  init.sh: |-
+    #!/bin/bash
+
+    script_dir=$(dirname "$0")
+    echo "스크립트 폴더: $script_dir"
+
+    for script_file in "$script_dir"/*.sh; do
+        # 현재 실행 중인 스크립트와 같은 파일이 아닌 경우에만 실행
+        if [ "$script_file" != "$0" ]; then
+            echo "실행 스크립트 파일: $script_file"
+            bash "$script_file" >> /script/init_log
+            echo "---------------------------------------"
+        fi
+    done
+
+  # ssh 설치용 스크립트
+  01_init_storage.sh: |-
+    #!/bin/bash
+    
+    mkdir ~/hello
+
+

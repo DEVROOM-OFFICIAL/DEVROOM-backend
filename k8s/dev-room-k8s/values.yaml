@@ -10,5 +10,14 @@ service_type: LoadBalancer
 # name of cmd server
 cmd_server_name: dev-room-cmd-server
 # main persistent volume
-pv_name: dev-room-pv-main
+pv_name: dev-room-pv
 pv_capacity: 500Mi
+pv_host_folder_name: dev-room
+pv_student_folder_name: student
+pv_class_folder_name: class
+pv_ta_folder_name: ta
+# test class template
+test_class_id: "TEST2024"
+test_student_id: "2024000001"
+test_ta_id: "2024000000"
+student_mount_path: "/root"
