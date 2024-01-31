@@ -3,12 +3,11 @@ kind: Service
 metadata:
   name: {{ .Values.cmd_server_name }}
   labels:
-    dev-room: cmd-server
+    dev-room: {{ .Values.cmd_server_name }}
 spec:
   ports:
     - port: {{ .Values.web_service_port }}
       targetPort: 80
   selector:
     app: {{ .Values.cmd_server_name }}
-    environment: {{ .Values.environment | lower }}
   type: {{ .Values.service_type }}
