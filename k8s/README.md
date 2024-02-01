@@ -66,3 +66,12 @@ helm ls
 ```bash
 helm uninstall $(helm ls -q)
 ```
+### 기타 명령어 목록
+```bash
+# Docker Desktop 용 ssh 연결 명령어
+ssh 2024000001-test2024@localhost -p 2024
+# 접속
+password: test
+# pod 교체 후 ssh 연결 오류 WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
+ssh-keygen -R [localhost]:2024
+```
