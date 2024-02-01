@@ -7,8 +7,8 @@ metadata:
     class_id: id-{{ .Values.test_class_id }}
 spec:
   ports:
-    - port: {{ .Values.web_service_port }}
-      targetPort: 80
+    - port: {{ .Values.ssh_service_port }}
+      targetPort: 22
   selector:
     app: student-{{ .Values.test_student_id }}-{{ .Values.test_class_id | lower }}
   type: {{ .Values.service_type }}

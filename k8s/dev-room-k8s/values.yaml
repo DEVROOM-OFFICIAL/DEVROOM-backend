@@ -4,7 +4,7 @@ environment: Dev
 host_controller_enabled: True
 # port for the Service:
 web_service_port: 8080
-ssh_service_port: 22
+ssh_service_port: 2024
 # type of the Service:
 service_type: LoadBalancer
 # name of cmd server
@@ -20,4 +20,4 @@ pv_ta_folder_name: ta
 test_class_id: "TEST2024"
 test_student_id: "2024000001"
 test_ta_id: "2024000000"
-student_mount_path: "/root"
+student_mount_path: "/home"

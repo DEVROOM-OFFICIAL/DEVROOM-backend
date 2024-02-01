@@ -22,7 +22,7 @@ spec:
               mountPath: "/app/config"
               readOnly: true
             - name: data
-              mountPath: /{{ .Values.student_mount_path }}/mydata
+              mountPath: /{{ .Values.student_mount_path }}/{{ .Values.test_student_id }}-{{ .Values.test_class_id | lower }}
               subPath: "{{ .Values.pv_host_folder_name }}/{{ .Values.pv_student_folder_name }}/{{ .Values.test_student_id }}"
           command:
             - "/bin/sh"
