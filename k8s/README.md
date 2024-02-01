@@ -21,6 +21,7 @@ Linux - container-d ver.
 ```bash
 # install k8s
 curl -sfL https://get.k3s.io | sh -s - --disable=traefik --write-kubeconfig-mode=644
+
 # 헬름을 위해 k3s 설정 파일 추출하기
 kubectl config view --raw > ~/.kube/config
 chmod 600 ~/.kube/config
@@ -34,12 +35,15 @@ curl -fsSL https://get.docker.com | sh
 sudo usermod -aG docker $USER
 newgrp docker
 sudo chown $USER:docker /var/run/docker.sock
+
 # install k8s
 curl -sfL https://get.k3s.io | sh -s - --docker --disable=traefik --write-kubeconfig-mode=644
+
 # 헬름을 위해 k3s 설정 파일 추출하기
 kubectl config view --raw > ~/.kube/config
 chmod 600 ~/.kube/config
 ```
+
 ### Helm 설치
 
 windows ver.
@@ -68,8 +72,6 @@ kubectl label node $(kubectl get nodes -o jsonpath='{.items[0].metadata.name}') 
 kubectl get nodes -l storage=dev-room-pv
 ```
 
-### ahems 
-
 ## 🚀 Helm 차트 실행
 ```bash
 # 차트에 들어갈 파일의 유효성을 검증
@@ -83,24 +85,29 @@ helm ls
 ### Helm 차트 제거
 ```bash
 helm uninstall $(helm ls -q)
-# 파드 종료 확인
-kubectl get pods
 ```
+
 ### 기타 명령어 목록
 ```bash
 # pod 교체 후 ssh 연결 오류 WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
 ssh-keygen -R [localhost]:2024
 ssh-keygen -R [114.200.134.130]:2024
+
 # ssh 연결 명령어
 ssh 2024000001-test2024@localhost -p 2024
 ssh 2024000001-test2024@114.200.134.130 -p 2024
-# 접속
+
+# 접속 비밀번호
 password: test
+
 # mini pc 테스트용
 ssh hdyang@114.200.134.130 -p 2019
 ssh hdyang@192.168.35.100 -p 2019
 sudo shutdown -h now
+
 # k3s 제거
 /usr/local/bin/k3s-uninstall.sh
 
+# 파드 확인
+kubectl get pods
 ```
