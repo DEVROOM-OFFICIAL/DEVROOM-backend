@@ -16,7 +16,7 @@ data:
         # 현재 실행 중인 스크립트와 같은 파일이 아닌 경우에만 실행
         if [ "$script_file" != "$0" ]; then
             echo "실행 스크립트 파일: $script_file"
-            bash "$script_file" >> /script/init_log
+            bash "$script_file" >> /script/log
             echo "---------------------------------------"
         fi
     done
