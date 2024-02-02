@@ -27,7 +27,7 @@ kubectl config view --raw > ~/.kube/config
 chmod 600 ~/.kube/config
 ```
 
-Linux - docker ver. (현재 오류 사항이 좀 있음)
+Linux - docker ver. (현재 오류 발생)
 ```bash
 # install Docker
 curl -fsSL https://get.docker.com | sh
@@ -72,6 +72,43 @@ kubectl label node $(kubectl get nodes -o jsonpath='{.items[0].metadata.name}') 
 kubectl get nodes -l storage=dev-room-pv
 ```
 
+### 토큰 생성 및 연결
+```bash
+# 기본 서비스 어카운트용 토큰을 보관할 시크릿을 생성한다.
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: default-token
+  annotations:
+    kubernetes.io/service-account.name: default
+type: kubernetes.io/service-account-token
+EOF
+
+# 토큰 컨트롤러가 해당 시크릿에 토큰을 기록할 때까지 기다린다.
+while ! kubectl describe secret default-token | grep -E '^token' >/dev/null; do
+  echo "waiting for token..." >&2
+  sleep 1
+done
+
+# default 계정 권한 설정
+kubectl create clusterrolebinding default-cluster-admin --clusterrole cluster-admin --serviceaccount default:default
+
+# 토큰 값을 얻는다
+TOKEN=$(kubectl get secret default-token -o jsonpath='{.data.token}' | base64 --decode)
+echo $TOKEN > test_token
+
+# linux 기준
+curl -k -H "Authorization: Bearer $TOKEN" https://114.200.134.130:6443/api/
+
+# windows 기준
+set TOKEN=위의 파일 내용
+curl -k -H "Authorization: Bearer %TOKEN%" https://114.200.134.130:6443/api/
+
+# get pods 테스트
+curl -v -k -X GET -H "Authorization: Bearer %TOKEN%" https://114.200.134.130:6443/api/v1/namespaces/default/pods
+```
+
 ## 🚀 Helm 차트 실행
 ```bash
 # 차트에 들어갈 파일의 유효성을 검증
@@ -88,6 +125,8 @@ helm uninstall $(helm ls -q)
 ```
 
 ### 기타 명령어 목록
+
+#### ssh 접속
 ```bash
 # pod 교체 후 ssh 연결 오류 WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
 ssh-keygen -R [localhost]:2024
@@ -104,7 +143,10 @@ password: test
 ssh hdyang@114.200.134.130 -p 2019
 ssh hdyang@192.168.35.100 -p 2019
 sudo shutdown -h now
+```
 
+#### k3s 제거
+```bash
 # k3s 제거
 /usr/local/bin/k3s-uninstall.sh
 
