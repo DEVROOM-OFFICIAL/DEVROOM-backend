@@ -1,4 +1,4 @@
-package com.example;
+package com.devlatte.devroom;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
