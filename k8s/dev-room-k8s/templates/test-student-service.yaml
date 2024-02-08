@@ -8,7 +8,7 @@ metadata:
 spec:
   ports:
     - port: {{ .Values.ssh_service_port }}
-      targetPort: 22
+      targetPort: 8080
   selector:
     app: student-{{ .Values.test_student_id }}-{{ .Values.test_class_id | lower }}
   type: {{ .Values.service_type }}
