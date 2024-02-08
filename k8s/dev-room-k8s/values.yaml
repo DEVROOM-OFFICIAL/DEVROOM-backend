@@ -3,8 +3,8 @@ environment: Dev
 # whether the host control is enabled
 host_controller_enabled: True
 # port for the Service:
-web_service_port: 8080
-ssh_service_port: 2024
+web_service_port: 8081
+vscode_service_port: 2024
 # type of the Service:
 service_type: LoadBalancer
 # name of cmd server
