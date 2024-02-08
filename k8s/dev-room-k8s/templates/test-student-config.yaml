@@ -31,7 +31,7 @@ data:
     # 패키지 업데이트 및 필요 패키지 설치
     apt update
     apt install -y sudo
-    apt install -y openssh-server
+    apt install -y curl
 
     # 새로운 사용자 생성
     student_id={{ .Values.test_student_id }}
@@ -40,13 +40,44 @@ data:
     useradd -m "$username"
     echo "$username:test" | chpasswd
     usermod -aG sudo "$username"
+    
 
     # 볼륨 권한 설정
-    student_folder_path="{{ .Values.student_mount_path }}/{{ .Values.test_student_id }}-{{ .Values.test_class_id | lower }}"
-    echo "$student_folder_path"
+    student_folder_path="{{ .Values.student_mount_path }}/$username"
     chmod -R 777 "$student_folder_path"
 
-    # SSH 서버 실행
-    service ssh start
-    
+    # user bash용 기본 설정
+    chsh -s /bin/bash $username
+    cp /etc/skel/.bashrc $student_folder_path/.bashrc
+    cp /etc/profile $student_folder_path/.profile
+
+    # .bash_profile 파일 생성
+    cat > $student_folder_path/.bash_profile <<EOF
+    if [ -f ~/.bashrc ]; then
+        . ~/.bashrc
+    fi
+    if [ -f ~/.profile ]; then
+        . ~/.profile
+    fi
+    EOF
+
+    # SSH 서버 설치 및 실행
+    # apt install -y openssh-server
+    # service ssh start
+
+    # vscode-server 설치 및 실행
+
+    sudo -u $username curl -fsSL https://code-server.dev/install.sh | sh
+
+    mkdir -p $student_folder_path/.config/code-server
+    cat > $student_folder_path/.config/code-server/config.yaml <<EOF
+    bind-addr: 0.0.0.0:8080
+    auth: password
+    password: test
+    cert: false
+    EOF
+
+    # sed -i.bak 's/bind-addr: 127.0.0.1:8080/bind-addr: 0.0.0.0:8080/' $student_folder_path/.config/code-server/config.yaml
+    # sed -i.bak 's/password: [a-zA-Z0-9]*/password: test/' $student_folder_path/.config/code-server/config.yaml
+    sudo -u $username code-server
 

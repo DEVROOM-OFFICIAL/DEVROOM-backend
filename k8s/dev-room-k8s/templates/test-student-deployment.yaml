@@ -14,6 +14,7 @@ spec:
       labels:
         app: student-{{ .Values.test_student_id }}-{{ .Values.test_class_id | lower }}
     spec:
+      hostname: {{ .Values.test_student_id }}-{{ .Values.test_class_id | lower }}
       containers:
         - name: ubuntu-container
           image: ubuntu:latest
@@ -22,7 +23,7 @@ spec:
               mountPath: "/app/config"
               readOnly: true
             - name: data
-              mountPath: /{{ .Values.student_mount_path }}/{{ .Values.test_student_id }}-{{ .Values.test_class_id | lower }}
+              mountPath: /{{ .Values.student_mount_path }}/{{ .Values.test_student_id }}-{{ .Values.test_class_id | lower }}/{{ .Values.test_student_id }}
               subPath: "{{ .Values.pv_host_folder_name }}/{{ .Values.pv_student_folder_name }}/{{ .Values.test_student_id }}"
           command:
             - "/bin/sh"
