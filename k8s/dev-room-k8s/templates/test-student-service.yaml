@@ -7,7 +7,7 @@ metadata:
     class_id: id-{{ .Values.test_class_id }}
 spec:
   ports:
-    - port: {{ .Values.ssh_service_port }}
+    - port: {{ .Values.vscode_service_port }}
       targetPort: 8080
   selector:
     app: student-{{ .Values.test_student_id }}-{{ .Values.test_class_id | lower }}

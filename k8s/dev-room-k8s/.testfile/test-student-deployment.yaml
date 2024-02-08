@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-{{ .Values.test_student_id }}-{{ .Values.test_class_id | lower }}
+  labels:
+    student_id: id-{{ .Values.test_student_id }}
+    class_id: id-{{ .Values.test_class_id }}
+spec:
+  selector:
+    matchLabels:
+      app: student-{{ .Values.test_student_id }}-{{ .Values.test_class_id | lower }}      
+  template:
+    metadata:
+      labels:
+        app: student-{{ .Values.test_student_id }}-{{ .Values.test_class_id | lower }}
+    spec:
+      hostname: {{ .Values.test_student_id }}-{{ .Values.test_class_id | lower }}
+      containers:
+        - name: ubuntu-container
+          image: ubuntu:latest
+          volumeMounts:
+            - name: config
+              mountPath: "/app/config"
+              readOnly: true
+            - name: data
+              mountPath: /{{ .Values.student_mount_path }}/{{ .Values.test_student_id }}-{{ .Values.test_class_id | lower }}/{{ .Values.test_student_id }}
+              subPath: "{{ .Values.pv_host_folder_name }}/{{ .Values.pv_student_folder_name }}/{{ .Values.test_student_id }}"
+          command:
+            - "/bin/sh"
+            - "-c"
+            - |
+              echo "init student container"
+              cp -r /app/config /script
+              chmod +x /script/init.sh
+              /script/init.sh >> /script/log
+              tail -f /dev/null
+
+      volumes:
+        - name: config
+          configMap:
+            name: student-{{ .Values.test_student_id }}-{{ .Values.test_class_id | lower }}-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Values.pv_name }}-claim

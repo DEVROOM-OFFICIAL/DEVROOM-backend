@@ -126,7 +126,12 @@ helm uninstall $(helm ls -q)
 
 ### 기타 명령어 목록
 
-#### ssh 접속
+#### vscode-server 접속
+
+브라우저로 다음 링크에 접속
+[114.200.134.130:2024](114.200.134.130:2024)
+
+#### ssh 접속 (현재는 vscode-server로 대체)
 ```bash
 # pod 교체 후 ssh 연결 오류 WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
 ssh-keygen -R [localhost]:2024
@@ -143,6 +148,12 @@ password: test
 ssh hdyang@114.200.134.130 -p 2019
 ssh hdyang@192.168.35.100 -p 2019
 sudo shutdown -h now
+```
+
+#### 파드 직접 접속 & 제거
+```bash
+kubectl exec -it <pod 이름> -- /bin/bash
+kubectl delete pod <pod 이름> --force --grace-period=0
 ```
 
 #### k3s 제거
