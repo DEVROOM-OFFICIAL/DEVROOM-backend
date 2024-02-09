@@ -129,7 +129,7 @@ helm uninstall $(helm ls -q)
 #### vscode-server 접속
 
 브라우저로 다음 링크에 접속
-[114.200.134.130:2024](114.200.134.130:2024)
+[114.200.134.130:37000](114.200.134.130:37000)
 
 #### ssh 접속 (현재는 vscode-server로 대체)
 ```bash
@@ -152,7 +152,8 @@ sudo shutdown -h now
 
 #### 파드 직접 접속 & 제거
 ```bash
-kubectl exec -it <pod 이름> -- /bin/bash
+kubectl exec -it $(kubectl get pods -o=name | grep '2024000001') -- /bin/bash
+kubectl exec -it $(kubectl get pods -o=name | grep '2024000001') -- tail -f /script/log
 kubectl delete pod <pod 이름> --force --grace-period=0
 ```
 
