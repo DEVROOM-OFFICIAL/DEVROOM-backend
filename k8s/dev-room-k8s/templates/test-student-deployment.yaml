@@ -18,6 +18,9 @@ spec:
       containers:
         - name: ubuntu-container
           image: ubuntu:latest
+          resources:
+            limits:
+              cpu: "0.5"
           volumeMounts:
             - name: config
               mountPath: "/app/config"
