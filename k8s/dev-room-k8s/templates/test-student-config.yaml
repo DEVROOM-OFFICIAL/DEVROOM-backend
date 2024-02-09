@@ -29,9 +29,9 @@ data:
     mkdir ~/hello
 
     # 패키지 업데이트 및 필요 패키지 설치
-    apt update
-    apt install -y sudo
-    apt install -y curl
+    apt update -qq
+    apt install -qq -y sudo
+    apt install -qq -y curl
 
     # 새로운 사용자 생성
     student_id={{ .Values.test_student_id }}
@@ -75,7 +75,10 @@ data:
     auth: password
     password: test
     cert: false
+    app-name: DEV-ROOM
+    welcome-text: 초기 비밀번호는 test 입니다
+    disable-workspace-trust: true
     EOF
 
-    sudo -u $username code-server
+    sudo -u $username code-server --open $student_folder_path
 
