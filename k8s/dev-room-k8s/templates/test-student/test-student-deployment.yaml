@@ -22,8 +22,10 @@ spec:
         - name: {{ $student.id }}-{{ $class.name | lower }}-container
           image: ubuntu:latest
           resources:
-            limits:
+            requests:
               cpu: "0.5"
+            limits:
+              cpu: "1"
           volumeMounts:
             - name: config
               mountPath: "/app/config"
