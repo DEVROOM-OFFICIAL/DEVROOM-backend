@@ -63,14 +63,18 @@ data:
     #!/bin/bash
 
     host_folder_name={{ .Values.pv_host_folder_name }}
-    student_id={{ .Values.test_student_id }}
     student_folder_name={{ .Values.pv_student_folder_name }}
 
-    if [ -d "/host/$host_folder_name/$student_folder_name/$student_id" ]; then
-        echo "student <$student_id> 폴더가 이미 존재합니다."
+    {{- range $student := .Values.students }}
+
+    if [ -d "/host/$host_folder_name/{{ $student.id }}" ]; then
+            echo "{{ $student.id }} 볼륨 폴더가 이미 존재합니다."
     else
-        mkdir "/host/$host_folder_name/$student_folder_name/$student_id"
-        echo "student <$student_id> 폴더가 생성되었습니다."
+        mkdir "/host/$host_folder_name/{{ $student.id }}"
+        echo "{{ $student.id }} 볼륨 폴더가 생성되었습니다."
     fi
+
+    {{- end }}
+
 
 

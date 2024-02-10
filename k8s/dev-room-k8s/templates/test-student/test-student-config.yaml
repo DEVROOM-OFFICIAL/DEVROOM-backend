@@ -1,10 +1,13 @@
+{{- range $student := .Values.students }}
+{{- range $class := $student.classes }}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: student-{{ .Values.test_student_id }}-{{ .Values.test_class_id | lower }}-config
+  name: student-{{ $student.id }}-{{ $class.name | lower }}-config
   labels:
-    student_id: id-{{ .Values.test_student_id }}
-    class_id: id-{{ .Values.test_class_id }}
+    student_id: id-{{ $student.id }}
+    class_id: id-{{ $class.name }}
 data:
   # 전체 스크립트 관리
   init.sh: |-
@@ -34,8 +37,8 @@ data:
     apt install -qq -y curl
 
     # 새로운 사용자 생성
-    student_id={{ .Values.test_student_id }}
-    class_id={{ .Values.test_class_id | lower }}
+    student_id={{ $student.id }}
+    class_id={{ $class.name | lower }}
     username="$student_id"-"$class_id"
     useradd -m "$username"
     echo "$username:test" | chpasswd
@@ -43,7 +46,7 @@ data:
     
 
     # 볼륨 권한 설정
-    student_folder_path="{{ .Values.student_mount_path }}/$username"
+    student_folder_path="{{ $.Values.student_mount_path }}/$username"
     chmod -R 777 "$student_folder_path"
 
     # user bash용 기본 설정
@@ -81,4 +84,5 @@ data:
     EOF
 
     sudo -u $username code-server --open $student_folder_path
-
+{{- end }}
+{{- end }}
