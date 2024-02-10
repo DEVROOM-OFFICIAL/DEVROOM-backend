@@ -1,0 +1,21 @@
+{{- $service_type := .Values.service_type }}
+{{- $vscode_service_port := .Values.vscode_service_port }}
+{{- range $student := .Values.students }}
+{{- range $class := $student.classes }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: student-{{ $student.id }}-{{ $class.name | lower }}
+  labels:
+    student_id: id-{{ $student.id }}
+    class_id: {{ $class.name }}
+spec:
+  ports:
+    - port: {{ $class.service_port }}
+      targetPort: {{ $vscode_service_port }}
+  selector:
+    app: student-{{ $student.id }}-{{ $class.name | lower }}
+  type: {{ $service_type }}
+{{- end }}
+{{- end }}

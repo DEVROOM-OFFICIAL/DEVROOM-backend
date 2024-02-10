@@ -4,7 +4,7 @@ environment: Dev
 host_controller_enabled: True
 # port for the Service:
 web_service_port: 8081
-vscode_service_port: 37000
+vscode_service_port: 8080
 # type of the Service:
 service_type: LoadBalancer
 # name of cmd server
@@ -17,7 +17,20 @@ pv_student_folder_name: student
 pv_class_folder_name: class
 pv_ta_folder_name: ta
 # test class template
-test_class_id: "TEST2024"
-test_student_id: "2024000001"
-test_ta_id: "2024000000"
 student_mount_path: "/home"
+
+students:
+  - id: "2024000001"
+    classes:
+      - name: "JAVA2024"
+        service_port: 37001
+      - name: "PYTHON2024"
+        service_port: 37002
+  - id: "2024000002"
+    classes:
+      - name: "JAVA2024"
+        service_port: 37003
+  - id: "2024000003"
+    classes:
+      - name: "PYTHON2024"
+        service_port: 37004
