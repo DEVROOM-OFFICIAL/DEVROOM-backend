@@ -1,0 +1,65 @@
+package com.devlatte.devroom.k8s.model;
+
+import io.fabric8.kubernetes.api.model.VolumeMount;
+import io.fabric8.kubernetes.api.model.apps.Deployment;
+import lombok.Data;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Data
+public class DeployInfo {
+    private String name;
+    private int replicas;
+    private int availableReplicas;
+    private int unavailableReplicas;
+    private Map<String, String> labels;
+    private String creationTimestamp;
+    private List<String> podNames;
+    private String pvClaim;
+    private String configMapName;
+    private Map<String, Map<String, String>> volumeMounts;
+
+    public DeployInfo(Deployment deployment) {
+        this.name = deployment.getMetadata().getName();
+        this.replicas = deployment.getSpec().getReplicas();
+        this.availableReplicas = deployment.getStatus().getAvailableReplicas() != null ? deployment.getStatus().getAvailableReplicas() : 0;
+        this.unavailableReplicas = deployment.getStatus().getUnavailableReplicas() != null ? deployment.getStatus().getUnavailableReplicas() : 0;
+        this.labels = deployment.getMetadata().getLabels();
+        this.creationTimestamp = deployment.getMetadata().getCreationTimestamp().toString();
+
+        this.pvClaim = deployment.getSpec().getTemplate().getSpec().getVolumes()
+                .stream()
+                .filter(volume -> volume.getPersistentVolumeClaim() != null)
+                .map(volume -> volume.getPersistentVolumeClaim().getClaimName())
+                .findFirst()
+                .orElse(null);
+
+        this.configMapName = deployment.getSpec().getTemplate().getSpec().getVolumes()
+                .stream()
+                .filter(volume -> volume.getConfigMap() != null)
+                .map(volume -> volume.getConfigMap().getName())
+                .findFirst()
+                .orElse(null);
+
+
+        this.volumeMounts = new HashMap<>();
+
+        deployment.getSpec().getTemplate().getSpec().getContainers().forEach(container -> {
+            container.getVolumeMounts().stream()
+                    .forEach(volumeMount -> {
+                        Map<String, String> mountInfo = new HashMap<>();
+                        if (volumeMount.getSubPath() != null){
+                            mountInfo.put("subpath", volumeMount.getSubPath());
+                        }
+                        mountInfo.put("mountpath", volumeMount.getMountPath());
+                        volumeMounts.put(volumeMount.getName(), mountInfo);
+                    });
+        });
+
+
+
+    }
+}
