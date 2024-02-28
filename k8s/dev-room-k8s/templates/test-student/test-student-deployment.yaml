@@ -31,7 +31,7 @@ spec:
               mountPath: "/app/config"
               readOnly: true
             - name: data
-              mountPath: "/{{ $.Values.student_mount_path }}/{{ $student.id }}-{{ $class.name | lower }}/{{ $student.id }}"
+              mountPath: "{{ $.Values.student_mount_path }}/{{ $student.id }}-{{ $class.name | lower }}/{{ $student.id }}"
               subPath: "{{ $.Values.pv_host_folder_name }}/{{ $.Values.pv_student_folder_name }}/{{ $student.id }}"
           command:
             - "/bin/sh"
