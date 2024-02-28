@@ -24,13 +24,13 @@ students:
     classes:
       - name: "JAVA2024"
         service_port: 37001
-      - name: "PYTHON2024"
-        service_port: 37002
-  - id: "2024000002"
-    classes:
-      - name: "JAVA2024"
-        service_port: 37003
-  - id: "2024000003"
-    classes:
-      - name: "PYTHON2024"
-        service_port: 37004
+  #     - name: "PYTHON2024"
+  #       service_port: 37002
+  # - id: "2024000002"
+  #   classes:
+  #     - name: "JAVA2024"
+  #       service_port: 37003
+  # - id: "2024000003"
+  #   classes:
+  #     - name: "PYTHON2024"
+  #       service_port: 37004
