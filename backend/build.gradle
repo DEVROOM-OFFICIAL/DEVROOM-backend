@@ -28,6 +28,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.freemarker:freemarker:2.3.31'
 	runtimeOnly 'com.h2database:h2'
 
 	implementation 'io.fabric8:kubernetes-client:6.10.0'
