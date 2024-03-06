@@ -20,10 +20,10 @@ pv_ta_folder_name: ta
 student_mount_path: "/home"
 
 students:
-  - id: "2024000001"
-    classes:
-      - name: "JAVA2024"
-        service_port: 37001
+  # - id: "2024000001"
+  #   classes:
+  #     - name: "JAVA2024"
+  #       service_port: 37001
   #     - name: "PYTHON2024"
   #       service_port: 37002
   # - id: "2024000002"
