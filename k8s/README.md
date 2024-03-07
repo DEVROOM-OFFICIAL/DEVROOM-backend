@@ -153,8 +153,8 @@ sudo shutdown -h now
 
 #### 파드 직접 접속 & 제거
 ```bash
-kubectl exec -it $(kubectl get pods -o=name | grep '2024000001') -- /bin/bash
-kubectl exec -it $(kubectl get pods -o=name | grep '2024000001') -- tail -f /script/log
+kubectl exec -it $(kubectl get pods -o=name | grep 'cmd') -- /bin/bash
+kubectl exec -it $(kubectl get pods -o=name | grep 'cmd') -- tail -f /script/log
 kubectl delete pod <pod 이름> --force --grace-period=0
 ```
 
@@ -166,3 +166,9 @@ kubectl delete pod <pod 이름> --force --grace-period=0
 # 파드 확인
 kubectl get pods
 ```
+
+### Grafana ID
+
+- id : test
+- pw : test
+- dashboard id : 1860
