@@ -9,12 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
-
-    // 학생 로그인
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@ModelAttribute MemberJoinRequestDto memberJoinRequestDto){

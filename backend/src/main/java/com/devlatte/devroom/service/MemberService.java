@@ -6,9 +6,12 @@ import com.devlatte.devroom.entity.Member;
 import com.devlatte.devroom.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-//import org.springframework.security.core.userdetails.UserDetails;
-//import org.springframework.security.core.userdetails.UserDetailsService;
-//import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,12 +21,29 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class MemberService {
+public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Member member = memberRepository.findOneByMemberId(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username has not been found."));
+
+        return User.builder()
+                .username(member.getMemberId())
+                .password(member.getMemberPw())
+                .authorities(String.valueOf(member.getMemberRole()))
+                .build();
+    }
+
+
     public Member register(MemberJoinRequestDto memberJoinRequestDto){
         Member member = memberJoinRequestDto.makeEntity();
         log.info("Registering member : {}", member);
         chkDuplicateMember(member);
+
+        member.setMemberPw(passwordEncoder.encode(member.getMemberPw()));
         return memberRepository.save(member);
     }
 
@@ -33,11 +53,11 @@ public class MemberService {
         Optional<Member> findMember;
 
 
-        if(memberRole == MemberRole.STUDENT){
+        if(memberRole == MemberRole.Student){
             String memberInfo = member.getMemberInfo();
 
             findMember = memberRepository.findOneByMemberInfo(memberInfo);
-        } else if(memberRole == MemberRole.PROFESSOR){
+        } else if(memberRole == MemberRole.Professor){
             String memberID = member.getMemberId();
 
             findMember = memberRepository.findOneByMemberId(memberID);
@@ -50,3 +70,5 @@ public class MemberService {
         }
     }
 }
+
+// 로그인, 즉 인증(authentication)과 인가(authorization)의 처리는 Spring Security에서 담당한다.

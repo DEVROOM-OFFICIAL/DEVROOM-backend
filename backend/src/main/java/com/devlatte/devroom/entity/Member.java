@@ -1,15 +1,13 @@
 package com.devlatte.devroom.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 //import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Data
 @Entity
 @Getter @Setter
+@NoArgsConstructor //Builder 사용시 생성자를 명시해주어야 함.
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
