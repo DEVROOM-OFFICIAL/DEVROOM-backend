@@ -1,10 +1,12 @@
+{{- range $pv:= .Values.pv_group }}
+---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ .Values.pv_name }}
+  name: {{ $pv.name }}
 spec:
   capacity:
-    storage:  {{ .Values.pv_capacity }}
+    storage:  {{ $.Values.pv_capacity }}
   accessModes:
     - ReadWriteMany
   local:
@@ -17,4 +19,5 @@ spec:
           - key: storage
             operator: In
             values:
-              - {{ .Values.pv_name }}
+              - {{ $.Values.node_name }}
+{{- end }}

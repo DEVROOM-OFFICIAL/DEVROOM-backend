@@ -38,4 +38,4 @@ spec:
             name: {{ .Values.cmd_server_name }}-config
         - name: data
           persistentVolumeClaim:
-            claimName: {{ .Values.pv_name }}-claim
+            claimName: {{ .Values.node_name }}-claim
