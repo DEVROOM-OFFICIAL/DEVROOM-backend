@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,17 +53,65 @@ public class DeployApi extends K8sApiBase {
     public String createDeploy(String deployName,
                                String hostName,
                                String image,
-                               String pvName,
-                               String pvPath,
-                               String mountPath,
                                String selector,
-                               String[] command,
                                String cpuReq,
                                String cpuLimit,
-                               Map<String, String> labels
+                               String memReq,
+                               String memLimit,
+                               Map<String, String> labels,
+                               Map<String, Map<String, String>> volumes,
+                               String[] command
     ) {
-        try {
 
+
+        List<VolumeMount> volumeMounts = new ArrayList<>();
+        List<Volume> volumesList = new ArrayList<>();
+
+        // 컨피그맵 등록
+        VolumeMount configMount = new VolumeMountBuilder()
+                .withName("config")
+                .withMountPath("/app/config")
+                .withReadOnly(true)
+                .build();
+        volumeMounts.add(configMount);
+
+        Volume config = new VolumeBuilder()
+                .withName("config")
+                .withConfigMap(new ConfigMapVolumeSourceBuilder()
+                        .withName(deployName + "-config")
+                        .build())
+                .build();
+        volumesList.add(config);
+
+        // 기타 볼륨 등록
+        for (Map.Entry<String, Map<String, String>> entry : volumes.entrySet()) {
+            String volumeName = entry.getKey();
+            String pvClaimName = volumeName + "-claim";
+            Map<String, String> volumeDetails = entry.getValue();
+            String pvPath = volumeDetails.get("pvPath");
+            String mountPath = volumeDetails.get("mountPath");
+            boolean isReadOnly = Boolean.parseBoolean(volumeDetails.get("isReadOnly"));
+
+            VolumeMount volumeMount = new VolumeMountBuilder()
+                    .withName(volumeName)
+                    .withMountPath(mountPath)
+                    .withSubPath(pvPath)
+                    .withReadOnly(isReadOnly)
+                    .build();
+            volumeMounts.add(volumeMount);
+
+            Volume volume = new VolumeBuilder()
+                    .withName(volumeName)
+                    .withPersistentVolumeClaim(new PersistentVolumeClaimVolumeSourceBuilder()
+                            .withClaimName(pvClaimName)
+                            .withReadOnly(isReadOnly)
+                            .build())
+                    .build();
+            volumesList.add(volume);
+        }
+
+
+        try {
             Deployment deploy = new DeploymentBuilder()
                 .withNewMetadata()
                 .withName(deployName)
@@ -82,37 +131,15 @@ public class DeployApi extends K8sApiBase {
                         .withName(deployName + "-container")
                         .withImage(image)
                         .withResources(new ResourceRequirementsBuilder()
-                        .addToRequests("cpu", new Quantity("0.5"))
-                        .addToLimits("cpu", new Quantity("1"))
+                        .addToRequests("cpu", new Quantity(cpuReq))
+                        .addToLimits("cpu", new Quantity(cpuLimit))
+                        .addToRequests("memory", new Quantity(memReq)) // RAM request
+                        .addToLimits("memory", new Quantity(memLimit))     // RAM limit
                         .build())
-                        .withVolumeMounts(
-                            new VolumeMountBuilder()
-                                .withName("config")
-                                .withMountPath("/app/config")
-                                .withReadOnly(true)
-                                .build(),
-                            new VolumeMountBuilder()
-                                .withName("user-data")
-                                .withMountPath(mountPath)
-                                .withSubPath(pvPath)
-                                .build())
+                        .withVolumeMounts(volumeMounts)
                         .withCommand(command)
                         .build())
-
-                    .withVolumes(
-                            new VolumeBuilder()
-                                .withName("config")
-                                .withConfigMap(new ConfigMapVolumeSourceBuilder()
-                                    .withName(deployName + "-config")
-                                .build())
-                            .build(),
-                            new VolumeBuilder()
-                                .withName("user-data")
-                                .withPersistentVolumeClaim(new PersistentVolumeClaimVolumeSourceBuilder()
-                                    .withClaimName(pvName + "-claim")
-                                .build())
-                            .build()
-                    )
+                    .withVolumes(volumesList)
                     .build())
                 .endTemplate()
                 .endSpec()

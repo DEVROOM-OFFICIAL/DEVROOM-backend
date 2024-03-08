@@ -23,6 +23,8 @@ public class DeployInfo {
     private Map<String, Map<String, String>> volumeMounts;
     private String cpuLimit;
     private String cpuRequest;
+    private String memLimit; // Add RAM limit field
+    private String memRequest; // Add RAM request field
     private List<String> command;
 
 
@@ -68,6 +70,12 @@ public class DeployInfo {
 
         this.cpuRequest = deployment.getSpec().getTemplate().getSpec().getContainers().getFirst().getResources().getRequests().containsKey("cpu") ?
                 deployment.getSpec().getTemplate().getSpec().getContainers().getFirst().getResources().getRequests().get("cpu").getAmount() : "none";
+
+        this.memLimit = deployment.getSpec().getTemplate().getSpec().getContainers().getFirst().getResources().getLimits().containsKey("memory") ?
+                deployment.getSpec().getTemplate().getSpec().getContainers().getFirst().getResources().getLimits().get("memory").getAmount() : "none";
+
+        this.memRequest = deployment.getSpec().getTemplate().getSpec().getContainers().getFirst().getResources().getRequests().containsKey("memory") ?
+                deployment.getSpec().getTemplate().getSpec().getContainers().getFirst().getResources().getRequests().get("memory").getAmount() : "none";
 
         this.command = deployment.getSpec().getTemplate().getSpec().getContainers().getFirst().getCommand();
     }
