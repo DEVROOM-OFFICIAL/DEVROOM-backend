@@ -2,11 +2,17 @@ package com.devlatte.devroom.k8s.controller.basic;
 
 import com.devlatte.devroom.k8s.api.basic.DeployApi;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,22 +36,36 @@ public class DeployController extends K8sControllerBase{
         String selector = jsonObject.get("selector").getAsString();
         String hostName = jsonObject.get("hostName").getAsString();
         String image = jsonObject.get("image").getAsString();
-        String pvName = jsonObject.get("pvName").getAsString();
-        String pvPath = jsonObject.get("pvPath").getAsString();
-        String mountPath = jsonObject.get("mountPath").getAsString();
+        String cpuReq = jsonObject.get("cpuReq").getAsString();
+        String cpuLimit = jsonObject.get("cpuLimit").getAsString();
+        String memReq = jsonObject.get("memReq").getAsString();
+        String memLimit = jsonObject.get("memLimit").getAsString();
+
+        Map<String, String> labels = response2Map(jsonObject, "labels");
+
+        JsonObject volumesJson = jsonObject.getAsJsonObject("volumes");
+        Map<String, Map<String, String>> volumes = new HashMap<>();
+
+        for (Map.Entry<String, JsonElement> entry : volumesJson.entrySet()) {
+            String volumeName = entry.getKey();
+            JsonObject volumeDetailsJson = entry.getValue().getAsJsonObject();
+
+            Map<String, String> volumeDetails = new HashMap<>();
+            volumeDetails.put("pvPath", volumeDetailsJson.get("pvPath").getAsString());
+            volumeDetails.put("mountPath", volumeDetailsJson.get("mountPath").getAsString());
+            volumeDetails.put("isReadOnly", volumeDetailsJson.get("isReadOnly").getAsString());
+            volumes.put(volumeName, volumeDetails);
+        }
+
         JsonArray commandArray = jsonObject.getAsJsonArray("command");
         String[] command = new String[commandArray.size()];
         for (int i = 0; i < commandArray.size(); i++) {
             command[i] = commandArray.get(i).getAsString();
         }
-        String cpuReq = jsonObject.get("cpuReq").getAsString();
-        String cpuLimit = jsonObject.get("cpuLimit").getAsString();
-        Map<String, String> labels = response2Map(jsonObject, "labels");
 
         return handleResponse(deployApi.createDeploy(
-                deployName, hostName, image, pvName,
-                pvPath, mountPath, selector, command,
-                cpuReq, cpuLimit, labels ));
+                deployName, hostName, image, selector,
+                cpuReq, cpuLimit, memReq, memLimit, labels, volumes, command));
     }
 
     @PostMapping(value = "/deploy/delete", produces = "application/json")

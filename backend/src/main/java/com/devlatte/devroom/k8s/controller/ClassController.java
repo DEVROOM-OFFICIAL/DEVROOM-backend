@@ -29,12 +29,14 @@ public class ClassController extends K8sControllerBase {
         String className = jsonObject.get("className").getAsString();
         String customScript = jsonObject.get("customScript").getAsString();
         Map<String, String> options = response2Map(jsonObject, "options");
-        Map<String, String> studentId2Port = response2Map(jsonObject,"studentId2Port");
+        JsonArray studentIdsArray = jsonObject.getAsJsonArray("studentIds");
+        List<String> studentIds = new ArrayList<>();
+        for (JsonElement element : studentIdsArray) studentIds.add(element.getAsString());
         JsonArray commandArray = jsonObject.getAsJsonArray("command");
         String[] command = new String[commandArray.size()];
         for (int i = 0; i < commandArray.size(); i++) command[i] = commandArray.get(i).getAsString();
 
-        return handleResponse(classApi.create(className, studentId2Port, options, command, customScript));
+        return handleResponse(classApi.create(className, studentIds, options, command, customScript));
     }
 
     @PostMapping(value = "/class/delete", produces = "application/json")
