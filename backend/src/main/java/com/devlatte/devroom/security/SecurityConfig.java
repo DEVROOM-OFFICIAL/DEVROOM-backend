@@ -1,11 +1,15 @@
 package com.devlatte.devroom.security;
 
 import com.devlatte.devroom.dto.ErrorResponse;
+import com.devlatte.devroom.dto.NormalResponse;
 import com.devlatte.devroom.entity.MemberRole;
 import com.devlatte.devroom.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -17,11 +21,19 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextHolderFilter;
+
+import java.util.Date;
+import java.util.stream.Collectors;
 
 @Slf4j
 @EnableWebSecurity
@@ -31,6 +43,9 @@ public class SecurityConfig {
     private final MemberService memberService;
     private final ObjectPostProcessor<Object> objectPostProcessor;
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Value("${jwt.token.key}")
+    private String secretKey;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -43,7 +58,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((authorizeRequests) ->
                         authorizeRequests
-                                .requestMatchers("/", "/login", "/error", "/register", "/login-proc").permitAll()
+                                .requestMatchers("/", "/login", "/error", "/register").permitAll()
                                 .requestMatchers("/student/**").hasRole(MemberRole.Student.name())
                                 .requestMatchers("/professor/**").hasRole(MemberRole.Professor.name())
                                 .anyRequest().authenticated()
@@ -80,6 +95,7 @@ public class SecurityConfig {
 
         AuthenticationManagerBuilder builder = new AuthenticationManagerBuilder(objectPostProcessor);
         jwtAuthenticationFilter.setAuthenticationManager(authenticationManager(builder));
+        jwtAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
 
         return jwtAuthenticationFilter;
     }
@@ -91,14 +107,34 @@ public class SecurityConfig {
         return auth.build();
     }
 
+    private AuthenticationSuccessHandler authenticationSuccessHandler = (((request, response, authentication) -> {
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        long expirationTime = 864_000_000; // 10 days
+
+        String jwtToken = Jwts.builder()
+                .setSubject(authentication.getName()) // 사용자 이름 또는 ID 설정
+                .claim("authorities", authentication.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority).collect(Collectors.toList())) // 사용자 권한 추가
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
+                .signWith(SignatureAlgorithm.HS512, secretKey.getBytes()) //deprecated, needs to be changed
+                .compact();
+
+        NormalResponse normalResponse = new NormalResponse(HttpStatus.OK, "Authentication Successful");
+        String responseBody = objectMapper.writeValueAsString(normalResponse);
+
+        response.setContentType("application/json");
+        response.addHeader("Authentication", "Bearer " + jwtToken);
+        response.getWriter().write(responseBody);
+    }));
 
     // AuthenticationEntryPoint : 인증 과정 중에 인증 실패 발생시 어떤 동작을 수행할 것인지 정의하는 컴포넌트
     private final AuthenticationEntryPoint authenticationEntryPoint = ((request, response, authException) -> {
         log.error("Not Authenticated Request", authException);
         log.error("Request Uri : {}", request.getRequestURI());
 
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED, "Unauthorized Request");
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED, "Authentication Failed.");
         String responseBody = objectMapper.writeValueAsString(errorResponse);
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

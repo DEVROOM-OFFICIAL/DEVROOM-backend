@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -24,8 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    @Value("${jwt.token.key}")
-    private String secretKey;
+
     //try-catch?
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
@@ -39,46 +42,25 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             String memberId = requestData.get("member_id");
             String memberPw = requestData.get("member_pw");
 
-            log.debug("member_id = {}", memberId);
-            log.debug("member_pw = {}", memberPw);
 
-            Authentication authentication = new UsernamePasswordAuthenticationToken(memberId, memberPw);
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(memberId, memberPw);
+            Authentication authentication = getAuthenticationManager().authenticate(authToken);
 
-            log.debug("authentication token made : {}", authentication);
-            return getAuthenticationManager().authenticate(authentication);
+
+            UserDetails principal = (UserDetails) authentication.getPrincipal();
+            System.out.println(principal.getUsername());
+            System.out.println(principal.getAuthorities());
+
+            return authentication;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    // 인증 성공했을 시 실행되는 경우
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         super.successfulAuthentication(request, response, chain, authResult);
-        long expirationTime = 864_000_000; // 10 days
-
-        String jwtToken = Jwts.builder()
-                .setSubject(authResult.getName()) // 사용자 이름 또는 ID 설정
-                .claim("authorities", authResult.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority).collect(Collectors.toList())) // 사용자 권한 추가
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(SignatureAlgorithm.HS512, secretKey.getBytes())
-                .compact();
-
-        System.out.println("member name = " + authResult.getName());
-        System.out.println("authorities = " +  authResult.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
-        System.out.println("generated jwt token = " + jwtToken);
-
-        response.addHeader("Authorization", "Bearer " + jwtToken); // 응답 헤더에 토큰 추가
-
-        /*
-        String redirectUrl = authResult.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .anyMatch(role -> role.equals("ROLE_STUDENT")) ? "/student" : "/professor";
-
-        response.sendRedirect(request.getContextPath() + redirectUrl);
-        */
-        //chain.doFilter(request, response);
     }
 }
