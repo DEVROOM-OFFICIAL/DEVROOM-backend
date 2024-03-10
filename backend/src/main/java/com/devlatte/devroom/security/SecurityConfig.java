@@ -7,6 +7,7 @@ import com.devlatte.devroom.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,11 +33,13 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
 
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.util.Date;
 import java.util.stream.Collectors;
 
 @Slf4j
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @RequiredArgsConstructor
 @Configuration
 public class SecurityConfig {
@@ -52,15 +55,14 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http
                 .authorizeHttpRequests((authorizeRequests) ->
                         authorizeRequests
                                 .requestMatchers("/", "/login", "/error", "/register").permitAll()
-                                .requestMatchers("/student/**").hasRole(MemberRole.Student.name())
-                                .requestMatchers("/professor/**").hasRole(MemberRole.Professor.name())
+                                //.requestMatchers("/student/**").hasRole(MemberRole.Student.name())
+                                //.requestMatchers("/professor/**").hasRole(MemberRole.Professor.name())
                                 .anyRequest().authenticated()
                 )
                 // JWT 인증방식 채택, CSRF 및 httpBasic, formLogin 형태의 인증 disable
@@ -78,6 +80,7 @@ public class SecurityConfig {
                         sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .addFilter(getJwtAuthenticationFilter())
+                .addFilterBefore(getJwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .logout((logout) ->
                         logout.logoutSuccessUrl("/")
                 )
@@ -100,6 +103,13 @@ public class SecurityConfig {
         return jwtAuthenticationFilter;
     }
 
+    @Bean
+    public JwtAuthorizationFilter getJwtAuthorizationFilter() throws Exception{
+        AuthenticationManagerBuilder builder = new AuthenticationManagerBuilder(objectPostProcessor);
+
+        return new JwtAuthorizationFilter(authenticationManager(builder), memberService);
+    }
+
 
     //authenticationManager의 설정 진행
     private AuthenticationManager authenticationManager(AuthenticationManagerBuilder auth) throws Exception{
@@ -111,6 +121,7 @@ public class SecurityConfig {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         long expirationTime = 864_000_000; // 10 days
+        Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 
         String jwtToken = Jwts.builder()
                 .setSubject(authentication.getName()) // 사용자 이름 또는 ID 설정
@@ -118,7 +129,7 @@ public class SecurityConfig {
                         .map(GrantedAuthority::getAuthority).collect(Collectors.toList())) // 사용자 권한 추가
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(SignatureAlgorithm.HS512, secretKey.getBytes()) //deprecated, needs to be changed
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
         NormalResponse normalResponse = new NormalResponse(HttpStatus.OK, "Authentication Successful");
