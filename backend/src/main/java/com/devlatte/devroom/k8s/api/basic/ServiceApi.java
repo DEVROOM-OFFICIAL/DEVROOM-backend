@@ -1,4 +1,4 @@
-package com.devlatte.devroom.k8s.api;
+package com.devlatte.devroom.k8s.api.basic;
 
 import com.devlatte.devroom.k8s.model.ServiceInfo;
 import io.fabric8.kubernetes.api.model.ServiceBuilder;
@@ -40,8 +40,9 @@ public class ServiceApi extends K8sApiBase { // Rename class to ServiceApi
             }
             return gson.toJson(services);
         } catch (KubernetesClientException e) {
-            e.printStackTrace();
-            return "Error occurred while communicating with Kubernetes";
+            HashMap<String, String> errorMap = new HashMap<>();
+            errorMap.put("error", e.getMessage());
+            return gson.toJson(errorMap);
         }
     }
 
@@ -79,7 +80,7 @@ public class ServiceApi extends K8sApiBase { // Rename class to ServiceApi
     public String deleteService(String serviceName) {
         try {
             if (k8s.services().inNamespace("default").withName(serviceName).get() != null) {
-                k8s.services().inNamespace("default").withName(serviceName).delete();
+                k8s.services().inNamespace("default").withName(serviceName).withGracePeriod(0).delete();
                 HashMap<String, String> successMap = new HashMap<>();
                 successMap.put("success", "Service deleted successfully");
                 return gson.toJson(successMap);

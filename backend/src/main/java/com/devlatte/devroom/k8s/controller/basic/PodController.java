@@ -1,6 +1,6 @@
-package com.devlatte.devroom.k8s.controller;
+package com.devlatte.devroom.k8s.controller.basic;
 
-import com.devlatte.devroom.k8s.api.*;
+import com.devlatte.devroom.k8s.api.basic.PodApi;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

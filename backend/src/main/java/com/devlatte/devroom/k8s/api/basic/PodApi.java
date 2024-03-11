@@ -1,4 +1,4 @@
-package com.devlatte.devroom.k8s.api;
+package com.devlatte.devroom.k8s.api.basic;
 
 import com.devlatte.devroom.k8s.model.PodInfo;
 import io.fabric8.kubernetes.api.model.Container;
@@ -39,8 +39,9 @@ public class PodApi extends K8sApiBase { // Rename class to PodApi
             }
             return gson.toJson(podNames);
         } catch (KubernetesClientException e) {
-            e.printStackTrace();
-            return "Error occurred while communicating with Kubernetes";
+            HashMap<String, String> errorMap = new HashMap<>();
+            errorMap.put("error", e.getMessage());
+            return gson.toJson(errorMap);
         }
     }
     public String createPod(String podName, String containerImage) {
@@ -73,7 +74,7 @@ public class PodApi extends K8sApiBase { // Rename class to PodApi
     public String deletePod(String podName) {
         try {
             if (k8s.pods().inNamespace("default").withName(podName).get() != null) {
-                k8s.pods().inNamespace("default").withName(podName).delete();
+                k8s.pods().inNamespace("default").withName(podName).withGracePeriod(0).delete();
                 HashMap<String, String> successMap = new HashMap<>();
                 successMap.put("success", "Pod deleted successfully");
                 return gson.toJson(successMap);

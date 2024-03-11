@@ -1,7 +1,10 @@
-package com.devlatte.devroom.k8s.controller;
+package com.devlatte.devroom.k8s.controller.basic;
 
+import com.devlatte.devroom.k8s.api.basic.K8sApiBase;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -10,7 +13,7 @@ import java.util.Map;
 public abstract class K8sControllerBase {
 
     protected final Gson gson = new Gson();
-
+    protected final Logger logger = LoggerFactory.getLogger(K8sApiBase.class);
     protected ResponseEntity<String> handleResponse(String jsonData) {
         try {
             // Array로 받아야하는 경우 ex) pod의 목록

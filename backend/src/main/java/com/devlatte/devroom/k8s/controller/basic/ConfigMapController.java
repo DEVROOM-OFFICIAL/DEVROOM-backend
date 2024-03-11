@@ -1,20 +1,16 @@
-package com.devlatte.devroom.k8s.controller;
+package com.devlatte.devroom.k8s.controller.basic;
 
-import com.devlatte.devroom.k8s.api.*;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.google.gson.reflect.TypeToken;
-import java.lang.reflect.Type;
-import java.util.HashMap;
+
 import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 public class ConfigMapController extends K8sControllerBase{
-    private final ConfigMapApi ConfigMapApi;
+    private final com.devlatte.devroom.k8s.api.basic.ConfigMapApi ConfigMapApi;
 
     @GetMapping(value = "/configmap/all", produces = "application/json")
     public ResponseEntity<String> getConfigMapAll() {

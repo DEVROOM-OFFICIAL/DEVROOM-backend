@@ -1,7 +1,5 @@
-package com.devlatte.devroom.k8s.api;
+package com.devlatte.devroom.k8s.api.basic;
 
-import com.devlatte.devroom.k8s.api.K8sApiBase;
-import com.devlatte.devroom.k8s.model.PVClaimInfo;
 import com.devlatte.devroom.k8s.model.PVInfo;
 import io.fabric8.kubernetes.api.model.*;
 import io.fabric8.kubernetes.client.KubernetesClientException;

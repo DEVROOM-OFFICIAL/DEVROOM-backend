@@ -1,7 +1,6 @@
-package com.devlatte.devroom.k8s.controller;
+package com.devlatte.devroom.k8s.controller.basic;
 
-import com.devlatte.devroom.k8s.api.PVApi;
-import com.devlatte.devroom.k8s.api.PVClaimApi;
+import com.devlatte.devroom.k8s.api.basic.PVClaimApi;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

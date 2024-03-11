@@ -1,16 +1,12 @@
-package com.devlatte.devroom.k8s.controller;
+package com.devlatte.devroom.k8s.controller.basic;
 
-import com.devlatte.devroom.k8s.api.PVApi;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
+import com.devlatte.devroom.k8s.api.basic.PVApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 @RestController
 @RequiredArgsConstructor

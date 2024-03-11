@@ -1,4 +1,4 @@
-package com.devlatte.devroom.k8s.api;
+package com.devlatte.devroom.k8s.api.basic;
 
 import io.fabric8.kubernetes.api.model.*;
 import com.devlatte.devroom.k8s.model.DeployInfo;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,16 +44,74 @@ public class DeployApi extends K8sApiBase {
             }
             return gson.toJson(deployments);
         } catch (KubernetesClientException e) {
-            e.printStackTrace();
-            return "Error occurred while communicating with Kubernetes";
+            HashMap<String, String> errorMap = new HashMap<>();
+            errorMap.put("error", e.getMessage());
+            return gson.toJson(errorMap);
         }
     }
 
-    public String createDeploy(String deployName, String hostName, String image, String pvName,
-                               String pvPath, String mountPath, String selector, String command,
-                               String cpuReq, String cpuLimit, Map<String, String> labels) {
-        try {
+    public String createDeploy(String deployName,
+                               String hostName,
+                               String image,
+                               String selector,
+                               String cpuReq,
+                               String cpuLimit,
+                               String memReq,
+                               String memLimit,
+                               Map<String, String> labels,
+                               Map<String, Map<String, String>> volumes,
+                               String[] command
+    ) {
 
+
+        List<VolumeMount> volumeMounts = new ArrayList<>();
+        List<Volume> volumesList = new ArrayList<>();
+
+        // 컨피그맵 등록
+        VolumeMount configMount = new VolumeMountBuilder()
+                .withName("config")
+                .withMountPath("/app/config")
+                .withReadOnly(true)
+                .build();
+        volumeMounts.add(configMount);
+
+        Volume config = new VolumeBuilder()
+                .withName("config")
+                .withConfigMap(new ConfigMapVolumeSourceBuilder()
+                        .withName(deployName + "-config")
+                        .build())
+                .build();
+        volumesList.add(config);
+
+        // 기타 볼륨 등록
+        for (Map.Entry<String, Map<String, String>> entry : volumes.entrySet()) {
+            String volumeName = entry.getKey();
+            String pvClaimName = volumeName + "-claim";
+            Map<String, String> volumeDetails = entry.getValue();
+            String pvPath = volumeDetails.get("pvPath");
+            String mountPath = volumeDetails.get("mountPath");
+            boolean isReadOnly = Boolean.parseBoolean(volumeDetails.get("isReadOnly"));
+
+            VolumeMount volumeMount = new VolumeMountBuilder()
+                    .withName(volumeName)
+                    .withMountPath(mountPath)
+                    .withSubPath(pvPath)
+                    .withReadOnly(isReadOnly)
+                    .build();
+            volumeMounts.add(volumeMount);
+
+            Volume volume = new VolumeBuilder()
+                    .withName(volumeName)
+                    .withPersistentVolumeClaim(new PersistentVolumeClaimVolumeSourceBuilder()
+                            .withClaimName(pvClaimName)
+                            .withReadOnly(isReadOnly)
+                            .build())
+                    .build();
+            volumesList.add(volume);
+        }
+
+
+        try {
             Deployment deploy = new DeploymentBuilder()
                 .withNewMetadata()
                 .withName(deployName)
@@ -72,37 +131,15 @@ public class DeployApi extends K8sApiBase {
                         .withName(deployName + "-container")
                         .withImage(image)
                         .withResources(new ResourceRequirementsBuilder()
-                        .addToRequests("cpu", new Quantity("0.5"))
-                        .addToLimits("cpu", new Quantity("1"))
+                        .addToRequests("cpu", new Quantity(cpuReq))
+                        .addToLimits("cpu", new Quantity(cpuLimit))
+                        .addToRequests("memory", new Quantity(memReq)) // RAM request
+                        .addToLimits("memory", new Quantity(memLimit))     // RAM limit
                         .build())
-                        .withVolumeMounts(
-                            new VolumeMountBuilder()
-                                .withName("config")
-                                .withMountPath("/app/config")
-                                .withReadOnly(true)
-                                .build(),
-                            new VolumeMountBuilder()
-                                .withName("data")
-                                .withMountPath(pvPath)
-                                .withSubPath(mountPath)
-                                .build())
+                        .withVolumeMounts(volumeMounts)
                         .withCommand(command)
                         .build())
-
-                    .withVolumes(
-                            new VolumeBuilder()
-                                .withName("config")
-                                .withConfigMap(new ConfigMapVolumeSourceBuilder()
-                                    .withName(deployName + "-config")
-                                .build())
-                            .build(),
-                            new VolumeBuilder()
-                                .withName("data")
-                                .withPersistentVolumeClaim(new PersistentVolumeClaimVolumeSourceBuilder()
-                                    .withClaimName(pvName + "-claim")
-                                .build())
-                            .build()
-                    )
+                    .withVolumes(volumesList)
                     .build())
                 .endTemplate()
                 .endSpec()
@@ -122,7 +159,7 @@ public class DeployApi extends K8sApiBase {
     public String deleteDeploy(String deployName) {
         try {
             if (k8s.apps().deployments().inNamespace("default").withName(deployName).get() != null) {
-                k8s.apps().deployments().inNamespace("default").withName(deployName).delete();
+                k8s.apps().deployments().inNamespace("default").withName(deployName).withGracePeriod(0).delete();
                 HashMap<String, String> successMap = new HashMap<>();
                 successMap.put("success", "Deploy deleted successfully");
                 return gson.toJson(successMap);

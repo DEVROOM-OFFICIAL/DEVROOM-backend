@@ -128,18 +128,11 @@ helm uninstall $(helm ls -q)
 
 #### vscode-server 접속
 
-브라우저로 다음 링크에 접속. 각 주소는 테스트용 학생임.
-
-- 2024000001 - java2024  
-  [114.200.134.130:37001](http://114.200.134.130:37001)  
-- 2024000001 - python2024  
-  [114.200.134.130:37002](http://114.200.134.130:37002)  
-- 2024000002 - java2024  
-  [114.200.134.130:37003](http://114.200.134.130:37003)  
-- 2024000003 - python2024  
-  [114.200.134.130:37004](http://114.200.134.130:37004)  
-
-#### ssh 접속 (현재는 vscode-server로 대체)
+~~브라우저로 다음 링크에 접속. 각 주소는 테스트용 학생임.~~ (현재 테스트용 학생 비활성화 상태)
+```bash
+114.200.134.130:37001
+```
+#### ssh 접속
 ```bash
 # pod 교체 후 ssh 연결 오류 WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
 ssh-keygen -R [localhost]:2024
@@ -160,8 +153,8 @@ sudo shutdown -h now
 
 #### 파드 직접 접속 & 제거
 ```bash
-kubectl exec -it $(kubectl get pods -o=name | grep '2024000001') -- /bin/bash
-kubectl exec -it $(kubectl get pods -o=name | grep '2024000001') -- tail -f /script/log
+kubectl exec -it $(kubectl get pods -o=name | grep 'cmd') -- /bin/bash
+kubectl exec -it $(kubectl get pods -o=name | grep 'cmd') -- tail -f /script/log
 kubectl delete pod <pod 이름> --force --grace-period=0
 ```
 
@@ -173,3 +166,9 @@ kubectl delete pod <pod 이름> --force --grace-period=0
 # 파드 확인
 kubectl get pods
 ```
+
+### Grafana ID
+
+- id : test
+- pw : test
+- dashboard id : 1860
