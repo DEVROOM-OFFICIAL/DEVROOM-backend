@@ -41,3 +41,7 @@ application.properties
 
 ### K8S Token file###
 token_file
+
+### k8s install log file ###
+k3s_install.log
+Helm_install.log
