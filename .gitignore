@@ -38,3 +38,6 @@ out/
 
 ### k8s confing file ###
 application.properties
+
+### K8S Token file###
+token_file
