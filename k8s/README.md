@@ -172,3 +172,16 @@ kubectl get pods
 - id : test
 - pw : test
 - dashboard id : 1860
+
+### Node 확인 명령어
+```bash
+kubectl get nodes
+kubectl top nodes
+kubectl describe nodes
+kubectl get pods --all-namespaces -o wide
+```
+
+### 방화벽 설정 목록
+- k8s api : 6443
+- student-container : 37001-37500
+- grafana : 3000
