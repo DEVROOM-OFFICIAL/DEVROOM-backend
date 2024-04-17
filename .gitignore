@@ -40,7 +40,8 @@ out/
 application.properties
 
 ### K8S Token file###
-token_file
+api-token_file
+node-token_file
 
 ### k8s install log file ###
 k3s_install.log

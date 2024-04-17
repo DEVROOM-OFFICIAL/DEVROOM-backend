@@ -14,6 +14,9 @@ git config --global user.name "Yanghyeondong"
 echo "Install k3s..."
 curl -sfL https://get.k3s.io | sh -s - --disable=traefik --write-kubeconfig-mode=644 > k3s_install.log
 
+echo "wait for 30s..."
+sleep 30
+
 echo "Make k3s Token..."
 # 기본 서비스 어카운트용 토큰을 보관할 시크릿을 생성한다.
 kubectl apply -f - <<EOF
@@ -37,7 +40,7 @@ kubectl create clusterrolebinding default-cluster-admin --clusterrole cluster-ad
 
 # 토큰 값을 얻는다
 TOKEN=$(kubectl get secret default-token -o jsonpath='{.data.token}' | base64 --decode)
-echo $TOKEN > token_file
+echo $TOKEN > api-token_file
 
 # 헬름을 위해 k3s 설정 파일 추출하기
 kubectl config view --raw > ~/.kube/config
@@ -66,3 +69,5 @@ helm lint dev-room-k8s
 helm install dev-room-k8s dev-room-k8s/
 # 설치된 릴리스의 상태를 확인
 helm ls
+
+sudo cat /var/lib/rancher/k3s/server/node-token > node-token_file
