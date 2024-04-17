@@ -10,11 +10,15 @@ git config --global user.email "hdyang0686@naver.com"
 git config --global user.name "Yanghyeondong"
 '
 
-
-
 # install k8s
 echo "Install k3s..."
 curl -sfL https://get.k3s.io | sh -s - --disable=traefik --write-kubeconfig-mode=644 > k3s_install.log
+
+echo "Waiting for .kube directory to be created..."
+while [ ! -d ~/.kube ]; do
+    sleep 5
+done
+sleep 5
 
 # 클러스터의 특정 노드에 레이블 부여
 kubectl label node $(kubectl get nodes -o jsonpath='{.items[0].metadata.name}') storage=dev-room-pv
@@ -45,11 +49,6 @@ kubectl create clusterrolebinding default-cluster-admin --clusterrole cluster-ad
 # 토큰 값을 얻는다
 TOKEN=$(kubectl get secret default-token -o jsonpath='{.data.token}' | base64 --decode)
 echo $TOKEN > token_file
-
-echo "Waiting for .kube directory to be created..."
-while [ ! -d ~/.kube ]; do
-    sleep 5
-done
 
 # 헬름을 위해 k3s 설정 파일 추출하기
 kubectl config view --raw > ~/.kube/config
