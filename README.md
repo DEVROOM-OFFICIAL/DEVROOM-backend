@@ -70,5 +70,11 @@
   <td align='center'><a href="https://github.com/Yanghyeondong"><img src="http://img.shields.io/badge/Yanghyeondong-green?style=social&logo=github"/></a></td>
   <td align='center'><a href="mailto:hdyang0686@naver.com"><img src="https://img.shields.io/badge/hdyang0686@naver.com-green?logo=naver&style=social"/></a></td>
  </tr>
-
+ <tr>
+  <td align='center'><img src="https://github.com/Yanghyeondong/DEV-ROOM/assets/37038105/006cac20-d6fc-4a91-ab46-ec4f9664645b" width="50" height="50"></td>
+  <td align='center'>김태건</td>
+  <td align='center'>프론트엔드 개발 및 관리</td>
+  <td align='center'><a href="https://github.com/Taegon21"><img src="http://img.shields.io/badge/Taegon21-green?style=social&logo=github"/></a></td>
+  <td align='center'><a href="mailto:aksen5240@gmail.com"><img src="https://img.shields.io/badge/aksen5240@gmail.com-green?logo=gmail&style=social"/></a></td>
+ </tr>
 </table>
