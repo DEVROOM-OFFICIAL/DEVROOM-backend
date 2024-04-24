@@ -21,11 +21,19 @@ repositories {
 	mavenCentral()
 }
 
+ext{
+	set('springCloudVersion', '2023.0.0')
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
 dependencies {
-	// implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-	// implementation 'org.springframework.security:spring-security-config:6.2.2'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -45,8 +53,18 @@ dependencies {
 	implementation 'org.slf4j:slf4j-api:2.0.12'
 	implementation 'ch.qos.logback:logback-classic:1.4.14'
 
+	implementation 'com.amazonaws.serverless:aws-serverless-java-container-springboot3:2.0.1'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+//gradlew로 Lambda 배포용 zip를 만들기 위한 gradlew task 정의, cd backend 이후 .\gradlew buildZip
+task buildZip(type: Zip){
+	from compileJava
+	from processResources
+	into('lib'){
+		from configurations.runtimeClasspath
+	}
 }
