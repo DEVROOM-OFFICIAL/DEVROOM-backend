@@ -38,7 +38,7 @@
 <br>
 
 ## 1.2 프로젝트 구조도
-![image](https://github.com/Yanghyeondong/DEV-ROOM/assets/37038105/ef333379-47bf-45cf-afa3-758c72bc4ae3)
+![image](https://github.com/Yanghyeondong/DEV-ROOM/assets/37038105/c02022e7-df07-490e-b1dd-f0e11a63c0f1)
 <br>
 
 ## 1.3 DB ERD
