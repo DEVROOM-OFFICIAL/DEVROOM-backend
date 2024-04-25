@@ -21,8 +21,9 @@ repositories {
 	mavenCentral()
 }
 
+/*
 ext{
-	set('springCloudVersion', '2023.0.0')
+	set('springCloudVersion', '2023.0.1')
 }
 
 dependencyManagement {
@@ -30,6 +31,7 @@ dependencyManagement {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
 	}
 }
+ */
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
