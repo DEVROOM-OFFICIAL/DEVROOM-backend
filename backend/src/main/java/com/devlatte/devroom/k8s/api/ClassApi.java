@@ -147,15 +147,15 @@ public class ClassApi extends K8sApiBase {
         template.put("class", className);
 
         // 기본 유저 생성 스크립트 넣기
-        data.put("ubuntu_init.sh",FreemarkerTemplate.convert("/scripts/", "ubuntu_init.sh", template));
+        data.put("ubuntu_init.sh",FreemarkerTemplate.convert("/scripts/", "ubuntu_init.sh", template).replaceAll("\\r", ""));
 
         // ssh 설치용 스크립트
         if (options.containsKey("ssh") && options.get("ssh").equals("yes"))
-            data.put("01_install_ssh.sh",FreemarkerTemplate.convert("/scripts/", "01_install_ssh.sh", template));
+            data.put("01_install_ssh.sh",FreemarkerTemplate.convert("/scripts/", "01_install_ssh.sh", template).replaceAll("\\r", ""));
 
         // vscode 설치용 스크립트
         if (options.containsKey("vscode") && options.get("vscode").equals("yes"))
-            data.put("02_install_vscode.sh",FreemarkerTemplate.convert("/scripts/", "02_install_vscode.sh", template));
+            data.put("02_install_vscode.sh",FreemarkerTemplate.convert("/scripts/", "02_install_vscode.sh", template).replaceAll("\\r", ""));
 
         // 커스텀 스크립트
         if (!customScript.isEmpty())
@@ -177,7 +177,7 @@ public class ClassApi extends K8sApiBase {
 
         // 커스텀 command 생성
         Map<String, String> template = new HashMap<>();
-        String cmd = FreemarkerTemplate.convert("/scripts/", "ubuntu_command.sh", template);
+        String cmd = FreemarkerTemplate.convert("/scripts/", "ubuntu_command.sh", template).replaceAll("\\r", "");
 
         String[] defaultCmd = (command != null && command.length > 0) ? command : new String[]{
                 "/bin/sh",
