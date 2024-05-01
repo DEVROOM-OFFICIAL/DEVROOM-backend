@@ -7,6 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,8 +15,12 @@ import java.util.stream.Collectors;
 public class JwtAuthorizationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
     @Override
     public AbstractAuthenticationToken convert(Jwt token) {
+
         String email = token.getClaims().get("email").toString();
-        List<String> roles = (List<String>)token.getClaims().get("cognito:groups");
+        String custom_role = token.getClaims().get("custom:role").toString();
+        String studentId = token.getClaims().get("custom:student_id").toString();
+        List<String> roles = new ArrayList<>();
+        roles.add(custom_role);
 
         List<SimpleGrantedAuthority> authorities = roles.stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
@@ -23,9 +28,10 @@ public class JwtAuthorizationConverter implements Converter<Jwt, AbstractAuthent
 
         log.info("HELLO!");
         log.info(email);
+        log.info(studentId);
         roles.forEach(role -> log.info(role));
-
 
         return new JwtAuthenticationToken(token, authorities);
     }
+
 }
