@@ -27,10 +27,7 @@ public class SecurityConfig {
 
     @Value("${jwt.token.URL}")
     private String keyURL;
-    @Bean
-    public JwtAuthorizationHelper jwtAuthorizationHelper(){
-        return new JwtAuthorizationHelper();
-    }
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return http
