@@ -1,6 +1,6 @@
 package com.devlatte.devroom.k8s.utils;
 
-import com.devlatte.devroom.k8s.api.basic.ServiceApi;
+import com.devlatte.devroom.k8s.api.core.ServiceApi;
 import com.devlatte.devroom.k8s.exception.*;
 import org.springframework.beans.factory.annotation.Value;
 import com.google.gson.JsonArray;

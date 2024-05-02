@@ -1,6 +1,6 @@
-package com.devlatte.devroom.k8s.api;
+package com.devlatte.devroom.k8s.api.user;
 
-import com.devlatte.devroom.k8s.api.basic.*;
+import com.devlatte.devroom.k8s.api.core.*;
 import com.devlatte.devroom.k8s.exception.NoAvailablePortException;
 import com.devlatte.devroom.k8s.utils.FreemarkerTemplate;
 import com.devlatte.devroom.k8s.utils.PortFind;

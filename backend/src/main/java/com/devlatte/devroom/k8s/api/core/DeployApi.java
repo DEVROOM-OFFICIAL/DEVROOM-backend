@@ -1,4 +1,4 @@
-package com.devlatte.devroom.k8s.api.basic;
+package com.devlatte.devroom.k8s.api.core;
 
 import io.fabric8.kubernetes.api.model.*;
 import com.devlatte.devroom.k8s.model.DeployInfo;

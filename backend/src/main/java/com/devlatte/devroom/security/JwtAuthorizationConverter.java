@@ -1,17 +1,22 @@
 package com.devlatte.devroom.security;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Component
+@Configuration
 public class JwtAuthorizationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
     @Override
     public AbstractAuthenticationToken convert(Jwt token) {
@@ -19,19 +24,15 @@ public class JwtAuthorizationConverter implements Converter<Jwt, AbstractAuthent
         String email = token.getClaims().get("email").toString();
         String custom_role = token.getClaims().get("custom:role").toString();
         String studentId = token.getClaims().get("custom:student_id").toString();
-        List<String> roles = new ArrayList<>();
-        roles.add(custom_role);
 
-        List<SimpleGrantedAuthority> authorities = roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                .collect(Collectors.toList());
-
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + custom_role));
+        authorities.add(new SimpleGrantedAuthority("ID_" + studentId));
         log.info("HELLO!");
         log.info(email);
         log.info(studentId);
-        roles.forEach(role -> log.info(role));
+        log.info(custom_role);
 
-        return new JwtAuthenticationToken(token, authorities);
+        return new JwtAuthenticationToken(token, authorities, studentId);
     }
-
 }

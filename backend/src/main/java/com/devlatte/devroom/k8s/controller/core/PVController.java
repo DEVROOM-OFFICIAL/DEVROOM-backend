@@ -1,6 +1,6 @@
-package com.devlatte.devroom.k8s.controller.basic;
+package com.devlatte.devroom.k8s.controller.core;
 
-import com.devlatte.devroom.k8s.api.basic.PVApi;
+import com.devlatte.devroom.k8s.api.core.PVApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -18,19 +18,19 @@ public class PVController extends K8sControllerBase{
     private final PVApi pvApi;
 
 
-    @GetMapping(value = "/pv/all", produces = "application/json")
+    @GetMapping(value = "/core/pv/all", produces = "application/json")
     public ResponseEntity<String> getPVAll() {
         String jsonData = pvApi.getInfo("all", null);
         return handleResponse(jsonData);
     }
 
-    @GetMapping(value = "/pv/{label}/{value}", produces = "application/json")
+    @GetMapping(value = "/core/pv/{label}/{value}", produces = "application/json")
     public ResponseEntity<String> getPVByLabel(@PathVariable String label, @PathVariable String value) {
         String jsonData = pvApi.getInfo(label, value);
         return handleResponse(jsonData);
     }
 
-    @PostMapping(value = "/pv/create", produces = "application/json")
+    @PostMapping(value = "/core/pv/create", produces = "application/json")
     public ResponseEntity<String> createPV(@RequestBody String requestBody) {
         JsonObject jsonObject = gson.fromJson(requestBody, JsonObject.class);
         String pvName = jsonObject.get("pvName").getAsString();
@@ -38,7 +38,7 @@ public class PVController extends K8sControllerBase{
         return handleResponse(pvApi.createPV(pvName, pvCapacity, nodeName));
     }
 
-    @PostMapping(value = "/pv/delete", produces = "application/json")
+    @PostMapping(value = "/core/pv/delete", produces = "application/json")
     public ResponseEntity<String> deletePV(@RequestBody String requestBody) {
         JsonObject jsonObject = gson.fromJson(requestBody, JsonObject.class);
         String pvName = jsonObject.get("pvName").getAsString();

@@ -1,41 +1,40 @@
-package com.devlatte.devroom.k8s.api.basic;
+package com.devlatte.devroom.k8s.api.core;
 
-import com.devlatte.devroom.k8s.model.PVInfo;
+import com.devlatte.devroom.k8s.model.PVClaimInfo;
 import io.fabric8.kubernetes.api.model.*;
 import io.fabric8.kubernetes.client.KubernetesClientException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class PVApi extends K8sApiBase {
+public class PVClaimApi extends K8sApiBase {
 
-    public PVApi(@Value("${config.kubernetes.url}") String apiServer,
-                 @Value("${config.kubernetes.token}") String apiToken) {
+    public PVClaimApi(@Value("${config.kubernetes.url}") String apiServer,
+                      @Value("${config.kubernetes.token}") String apiToken) {
         super(apiServer, apiToken);
     }
 
     public String getInfo(String label, String value) {
         try {
-            List<PVInfo> persistentVolumes;
+            List<PVClaimInfo> persistentVolumeClaims;
             if ("all".equals(label)) {
-                persistentVolumes = k8s.persistentVolumes().list().getItems()
+                persistentVolumeClaims = k8s.persistentVolumeClaims().inNamespace("default").list().getItems()
                         .stream()
-                        .map(PVInfo::new)
+                        .map(PVClaimInfo::new)
                         .collect(Collectors.toList());
             } else {
-                persistentVolumes = k8s.persistentVolumes().withLabel(label, value).list().getItems()
+                persistentVolumeClaims = k8s.persistentVolumeClaims().inNamespace("default").withLabel(label, value).list().getItems()
                         .stream()
-                        .map(PVInfo::new)
+                        .map(PVClaimInfo::new)
                         .collect(Collectors.toList());
             }
-            return gson.toJson(persistentVolumes);
+            return gson.toJson(persistentVolumeClaims);
 
         } catch (KubernetesClientException e) {
             HashMap<String, String> errorMap = new HashMap<>();
@@ -44,40 +43,28 @@ public class PVApi extends K8sApiBase {
         }
     }
 
-    public String createPV(String pvName, String pvCapacity, String nodeName) {
+    public String createPVClaim(String pvClaimName, String pvCapacity) {
         try {
             Quantity capacityQuantity = new QuantityBuilder()
                     .withAmount(pvCapacity)
                     .build();
 
-            PersistentVolume pv = new PersistentVolumeBuilder()
+            PersistentVolumeClaim pvClaim = new PersistentVolumeClaimBuilder()
                     .withNewMetadata()
-                    .withName(pvName)
+                    .withName(pvClaimName + "-claim")
                     .endMetadata()
                     .withNewSpec()
-                    .withCapacity(Collections.singletonMap("storage", capacityQuantity))
                     .withAccessModes("ReadWriteMany")
-                    .withNewLocal()
-                    .withPath("/")
-                    .endLocal()
-                    .withNewNodeAffinity()
-                    .withNewRequired()
-                    .addNewNodeSelectorTerm()
-                    .addNewMatchExpression()
-                    .withKey("storage")
-                    .withOperator("In")
-                    .withValues(nodeName)
-                    .endMatchExpression()
-                    .endNodeSelectorTerm()
-                    .endRequired()
-                    .endNodeAffinity()
+                    .withNewResources()
+                    .addToRequests("storage", capacityQuantity)
+                    .endResources()
+                    .withStorageClassName("")
                     .endSpec()
                     .build();
 
-            k8s.persistentVolumes().resource(pv).create();
-
-            PVInfo persistentVolume = new PVInfo(k8s.persistentVolumes().withName(pvName).get());
-            return gson.toJson(persistentVolume);
+            k8s.persistentVolumeClaims().inNamespace("default").resource(pvClaim).create();
+            PVClaimInfo persistentVolumeClaim = new PVClaimInfo(k8s.persistentVolumeClaims().inNamespace("default").withName(pvClaimName+"-claim").get());
+            return gson.toJson(persistentVolumeClaim);
 
         } catch (KubernetesClientException e) {
             HashMap<String, String> errorMap = new HashMap<>();
@@ -86,16 +73,16 @@ public class PVApi extends K8sApiBase {
         }
     }
 
-    public String deletePV(String pvName) {
+    public String deletePVClaim(String pvClaimName) {
         try {
-            if (k8s.persistentVolumes().withName(pvName).get() != null) {
-                k8s.persistentVolumes().withName(pvName).delete();
+            if (k8s.persistentVolumeClaims().inNamespace("default").withName(pvClaimName).get() != null) {
+                k8s.persistentVolumeClaims().inNamespace("default").withName(pvClaimName).delete();
                 HashMap<String, String> successMap = new HashMap<>();
-                successMap.put("success", "Persistent Volume deleted successfully");
+                successMap.put("success", "Persistent Volume Claim deleted successfully");
                 return gson.toJson(successMap);
             } else {
                 HashMap<String, String> errorMap = new HashMap<>();
-                errorMap.put("error", "Persistent Volume doesn't exist");
+                errorMap.put("error", "Persistent Volume Claim doesn't exist");
                 return gson.toJson(errorMap);
             }
         } catch (KubernetesClientException e) {
@@ -104,5 +91,4 @@ public class PVApi extends K8sApiBase {
             return gson.toJson(errorMap);
         }
     }
-
 }
