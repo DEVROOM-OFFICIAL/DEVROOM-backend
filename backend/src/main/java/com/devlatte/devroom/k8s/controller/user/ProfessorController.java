@@ -8,10 +8,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,9 +50,12 @@ public class ProfessorController extends K8sControllerBase {
 
         return handleResponse(classApi.delete(className, studentIds));
     }
-    @GetMapping(value = "/pod/all", produces = "application/json")
+    @GetMapping(value = "/class/{id}/pod", produces = "application/json")
+    public ResponseEntity<String> getPodByLabel(@PathVariable String id) {
+        return handleResponse(podApi.getInfo("class_id", "id-"+id));
+    }
+    @GetMapping(value = "/class/all/pod", produces = "application/json")
     public ResponseEntity<String> getPodAll() {
         return handleResponse(podApi.getInfo("all", null));
     }
-
 }
