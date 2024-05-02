@@ -1,12 +1,14 @@
-package com.devlatte.devroom.k8s.controller;
+package com.devlatte.devroom.k8s.controller.user;
 
-import com.devlatte.devroom.k8s.api.ClassApi;
-import com.devlatte.devroom.k8s.controller.basic.K8sControllerBase;
+import com.devlatte.devroom.k8s.api.core.PodApi;
+import com.devlatte.devroom.k8s.api.user.ClassApi;
+import com.devlatte.devroom.k8s.controller.core.K8sControllerBase;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,9 +20,10 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-public class ClassController extends K8sControllerBase {
+public class ProfessorController extends K8sControllerBase {
 
     private final ClassApi classApi;
+    private final PodApi podApi;
 
     @PostMapping(value = "/class/create", produces = "application/json")
     public ResponseEntity<String> createClass(@RequestBody String requestBody) throws IOException, InterruptedException {
@@ -49,6 +52,10 @@ public class ClassController extends K8sControllerBase {
         for (JsonElement element : studentIdsArray) studentIds.add(element.getAsString());
 
         return handleResponse(classApi.delete(className, studentIds));
+    }
+    @GetMapping(value = "/pod/all", produces = "application/json")
+    public ResponseEntity<String> getPodAll() {
+        return handleResponse(podApi.getInfo("all", null));
     }
 
 }

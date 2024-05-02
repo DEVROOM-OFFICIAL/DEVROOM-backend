@@ -1,4 +1,4 @@
-package com.devlatte.devroom.k8s.api.basic;
+package com.devlatte.devroom.k8s.api.core;
 
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodList;
@@ -15,9 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 public class ExecApi extends K8sApiBase {

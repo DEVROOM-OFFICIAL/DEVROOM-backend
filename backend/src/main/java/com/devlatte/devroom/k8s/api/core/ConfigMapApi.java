@@ -1,4 +1,4 @@
-package com.devlatte.devroom.k8s.api.basic;
+package com.devlatte.devroom.k8s.api.core;
 
 
 import com.devlatte.devroom.k8s.model.ConfigMapInfo;

@@ -2,43 +2,47 @@ package com.devlatte.devroom.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationDecision;
-import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
-
-import java.util.function.Supplier;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
+import com.devlatte.devroom.security.JwtAuthorizationConverter;
 
 @Slf4j
 @EnableWebSecurity(debug = true)
 @RequiredArgsConstructor
 @Configuration
+@ComponentScan(basePackages = "com.devlatte.devroom.security")
 public class SecurityConfig {
+
     @Value("${jwt.token.URL}")
     private String keyURL;
-
+    @Bean
+    public JwtAuthorizationHelper jwtAuthorizationHelper(){
+        return new JwtAuthorizationHelper();
+    }
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return http
-                .authorizeHttpRequests(auth ->{auth
+                .authorizeHttpRequests(auth ->{
+                    auth
                         .requestMatchers("/", "/error").permitAll()
+                        // 보안을 위해 k8s에 직접적으로 요청하는 API는 전부 deny
+                        .requestMatchers("/core/**").denyAll()
+                        .requestMatchers("/pod/**").hasAuthority("ROLE_Student")
+                        .requestMatchers("/pod/{id}").access(new WebExpressionAuthorizationManager("hasAuthority('ID_'+#id)"))
                         .requestMatchers("/**").hasAuthority("ROLE_Professor")
-                        .requestMatchers("/pod/**", "/service/**").hasAuthority("ROLE_Student")
-                        // 본인의 id의 주소로만 접근이 가능하게 해야할 것 같습니다. 검색해본 결과 아래 같은 느낌인것 같지만, 정확하게 구현이 필요합니다.
-                        // .requestMatchers("/pod/student_id/{id}", "/service/**").access()
-                        .anyRequest().authenticated();
+                        .anyRequest().authenticated(); //
                 })
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt->{
@@ -58,5 +62,6 @@ public class SecurityConfig {
     }
 
 }
+
 
 
