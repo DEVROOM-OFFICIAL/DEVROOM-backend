@@ -1,6 +1,5 @@
-package com.devlatte.devroom.k8s.api.basic;
+package com.devlatte.devroom.k8s.api.core;
 
-import com.devlatte.devroom.k8s.utils.FreemarkerTemplate;
 import com.google.gson.Gson;
 import io.fabric8.kubernetes.client.*;
 import org.slf4j.Logger;

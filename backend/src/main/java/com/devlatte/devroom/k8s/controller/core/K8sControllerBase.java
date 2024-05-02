@@ -1,6 +1,6 @@
-package com.devlatte.devroom.k8s.controller.basic;
+package com.devlatte.devroom.k8s.controller.core;
 
-import com.devlatte.devroom.k8s.api.basic.K8sApiBase;
+import com.devlatte.devroom.k8s.api.core.K8sApiBase;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;

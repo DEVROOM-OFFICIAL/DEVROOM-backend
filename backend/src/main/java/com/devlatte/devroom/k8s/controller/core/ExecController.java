@@ -1,7 +1,7 @@
-package com.devlatte.devroom.k8s.controller.basic;
+package com.devlatte.devroom.k8s.controller.core;
 
 
-import com.devlatte.devroom.k8s.api.basic.ExecApi;
+import com.devlatte.devroom.k8s.api.core.ExecApi;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import java.io.IOException;
 public class ExecController extends K8sControllerBase{
 
     private final ExecApi execApi;
-    @PostMapping(value = "/cmd/exec", produces = "application/json")
+    @PostMapping(value = "/core/cmd/exec", produces = "application/json")
     public ResponseEntity<String> runCmd(@RequestBody String requestBody) throws IOException, InterruptedException {
         JsonObject jsonObject = gson.fromJson(requestBody, JsonObject.class);
         JsonArray commandArray = jsonObject.getAsJsonArray("command");

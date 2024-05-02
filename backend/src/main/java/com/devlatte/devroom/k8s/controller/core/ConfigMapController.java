@@ -1,4 +1,4 @@
-package com.devlatte.devroom.k8s.controller.basic;
+package com.devlatte.devroom.k8s.controller.core;
 
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
@@ -10,18 +10,18 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 public class ConfigMapController extends K8sControllerBase{
-    private final com.devlatte.devroom.k8s.api.basic.ConfigMapApi ConfigMapApi;
+    private final com.devlatte.devroom.k8s.api.core.ConfigMapApi ConfigMapApi;
 
-    @GetMapping(value = "/configmap/all", produces = "application/json")
+    @GetMapping(value = "/core/configmap/all", produces = "application/json")
     public ResponseEntity<String> getConfigMapAll() {
         return handleResponse(ConfigMapApi.getInfo("all", null));
     }
 
-    @GetMapping(value = "/configmap/{label}/{value}", produces = "application/json")
+    @GetMapping(value = "/core/configmap/{label}/{value}", produces = "application/json")
     public ResponseEntity<String> getConfigMapByLabel(@PathVariable String label, @PathVariable String value) {
         return handleResponse(ConfigMapApi.getInfo(label, value));
     }
-    @PostMapping(value = "/configmap/create", produces = "application/json")
+    @PostMapping(value = "/core/configmap/create", produces = "application/json")
     public ResponseEntity<String> createConfigMap(@RequestBody String requestBody) {
         JsonObject jsonObject = gson.fromJson(requestBody, JsonObject.class);
         String configMapName = jsonObject.get("configMapName").getAsString();
@@ -30,7 +30,7 @@ public class ConfigMapController extends K8sControllerBase{
         return handleResponse(ConfigMapApi.createConfigMap(configMapName, labels, data));
     }
 
-    @PostMapping(value = "/configmap/delete", produces = "application/json")
+    @PostMapping(value = "/core/configmap/delete", produces = "application/json")
     public ResponseEntity<String> deleteConfigMap(@RequestBody String requestBody) {
         JsonObject jsonObject = gson.fromJson(requestBody, JsonObject.class);
         String configMapName = jsonObject.get("configMapName").getAsString();

@@ -1,18 +1,14 @@
-package com.devlatte.devroom.k8s.controller.basic;
+package com.devlatte.devroom.k8s.controller.core;
 
-import com.devlatte.devroom.k8s.api.basic.DeployApi;
+import com.devlatte.devroom.k8s.api.core.DeployApi;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -20,16 +16,16 @@ import java.util.Map;
 public class DeployController extends K8sControllerBase{
     private final DeployApi deployApi;
 
-    @GetMapping(value = "/deploy/all", produces = "application/json")
+    @GetMapping(value = "/core/deploy/all", produces = "application/json")
     public ResponseEntity<String> getDeploymentsAll() {
         return handleResponse(deployApi.getInfo("all", null));
     }
 
-    @GetMapping(value = "/deploy/{label}/{value}", produces = "application/json")
+    @GetMapping(value = "/core/deploy/{label}/{value}", produces = "application/json")
     public ResponseEntity<String> getDeploymentsByLabel(@PathVariable String label, @PathVariable String value) {
         return handleResponse(deployApi.getInfo(label, value));
     }
-    @PostMapping(value = "/deploy/create", produces = "application/json")
+    @PostMapping(value = "/core/deploy/create", produces = "application/json")
     public ResponseEntity<String> createDeploy(@RequestBody String requestBody) {
         JsonObject jsonObject = gson.fromJson(requestBody, JsonObject.class);
         String deployName = jsonObject.get("deployName").getAsString();
@@ -68,7 +64,7 @@ public class DeployController extends K8sControllerBase{
                 cpuReq, cpuLimit, memReq, memLimit, labels, volumes, command));
     }
 
-    @PostMapping(value = "/deploy/delete", produces = "application/json")
+    @PostMapping(value = "/core/deploy/delete", produces = "application/json")
     public ResponseEntity<String> deleteDeploy(@RequestBody String requestBody) {
         JsonObject jsonObject = gson.fromJson(requestBody, JsonObject.class);
         String deployName = jsonObject.get("deployName").getAsString();

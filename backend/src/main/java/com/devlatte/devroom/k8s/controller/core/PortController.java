@@ -1,4 +1,4 @@
-package com.devlatte.devroom.k8s.controller.basic;
+package com.devlatte.devroom.k8s.controller.core;
 
 import com.devlatte.devroom.k8s.utils.*;
 import com.devlatte.devroom.k8s.exception.*;
@@ -15,7 +15,7 @@ public class PortController extends K8sControllerBase{
 
     private final PortFind portFind;
 
-    @GetMapping(value = "/port/find", produces = "application/json")
+    @GetMapping(value = "/core/port/find", produces = "application/json")
     public ResponseEntity<String> getPort()  {
         try{
             String port = portFind.get(false);
