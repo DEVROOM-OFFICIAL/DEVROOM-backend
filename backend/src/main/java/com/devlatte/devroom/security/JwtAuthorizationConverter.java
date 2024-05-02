@@ -21,18 +21,21 @@ public class JwtAuthorizationConverter implements Converter<Jwt, AbstractAuthent
     @Override
     public AbstractAuthenticationToken convert(Jwt token) {
 
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
         String email = token.getClaims().get("email").toString();
         String custom_role = token.getClaims().get("custom:role").toString();
-        String studentId = token.getClaims().get("custom:student_id").toString();
-
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_" + custom_role));
-        authorities.add(new SimpleGrantedAuthority("ID_" + studentId));
-        log.info("HELLO!");
+
+        if (token.getClaims().containsKey("custom:student_id")) {
+            String studentId = token.getClaims().get("custom:student_id").toString();
+            authorities.add(new SimpleGrantedAuthority("ID_" + studentId));
+            log.info(studentId);
+        }
+
         log.info(email);
-        log.info(studentId);
         log.info(custom_role);
 
-        return new JwtAuthenticationToken(token, authorities, studentId);
+        return new JwtAuthenticationToken(token, authorities);
     }
 }
