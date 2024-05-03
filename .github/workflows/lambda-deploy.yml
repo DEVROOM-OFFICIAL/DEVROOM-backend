@@ -30,7 +30,7 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: Upload S3 code
-        run: aws s3 sync ./bacend/build/distributions/ s3://devroombucket/
+        run: aws s3 sync ./bacend/build/distributions/ s3://devroombucket/lambda_snap
 
       # - name: Update Lambda code
       #   run: |
