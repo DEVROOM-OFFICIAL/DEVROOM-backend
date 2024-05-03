@@ -34,9 +34,11 @@ jobs:
           FUNCTION_NAME=devRoomLambda;
           aws lambda update-function-code --function-name $FUNCTION_NAME \
           --s3-bucket devroombucket --s3-key lambda_snap/dev-room-0.0.1-SNAPSHOT.zip
-       
+      
+      - name: Install jq
+        run: sudo apt-get install jq
+
       - name: Update Lambda SnapStart Alias Version
-        uses: sergeysova/jq-action@v2
         run: |
           VERSION=$(aws lambda publish-version --function-name $FUNCTION_NAME | jq -r .Version);
           aws lambda update-alias --function-name $FUNCTION_NAME --name snap --function-version $VERSION
