@@ -28,9 +28,12 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
-      
-      - name: Update code
-        run: |
-          ls -al;
-          aws lambda update-function-code --function-name devRoomLambda:snap \
-          --zip-file fileb://backend/build/distributions/dev-room-0.0.1-SNAPSHOT.zip
+
+      - name: Upload S3 code
+        run: aws s3 sync ./bacend/build/distributions/ s3://BUCKET_NAME --delete
+
+      # - name: Update Lambda code
+      #   run: |
+      #     ls -al /backend/build/distributions
+      #     aws lambda update-function-code --function-name devRoomLambda:snap \
+      #     --zip-file fileb://backend/build/distributions/dev-room-0.0.1-SNAPSHOT.zip
