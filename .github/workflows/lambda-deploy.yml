@@ -40,5 +40,6 @@ jobs:
 
       - name: Update Lambda SnapStart Alias Version
         run: |
+          FUNCTION_NAME=devRoomLambda;
           VERSION=$(aws lambda publish-version --function-name $FUNCTION_NAME | jq -r .Version);
           aws lambda update-alias --function-name $FUNCTION_NAME --name snap --function-version $VERSION
