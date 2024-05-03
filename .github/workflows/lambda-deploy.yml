@@ -16,6 +16,9 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Copy application.properties
+        run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./backend/src/main/resources/application.properties
+
       - name: Build with Gradle
         run: cd backend;chmod +x gradlew;./gradlew buildZip
 
@@ -34,9 +37,6 @@ jobs:
           FUNCTION_NAME=devRoomLambda;
           aws lambda update-function-code --function-name $FUNCTION_NAME \
           --s3-bucket devroombucket --s3-key lambda_snap/dev-room-0.0.1-SNAPSHOT.zip
-      
-      - name: Install jq
-        run: sudo apt-get install jq
 
       - name: Update Lambda SnapStart Alias Version
         run: |
