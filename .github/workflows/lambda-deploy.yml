@@ -16,8 +16,8 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+      # - name: Setup Gradle
+      #   uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
       
       - name: Build with Gradle
         run: cd backend;chmod +x gradlew;./gradlew buildZip
@@ -30,7 +30,7 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: Upload S3 code
-        run: aws s3 sync ./bacend/build/distributions/ s3://devroombucket/lambda_snap
+        run: aws s3 sync ./backend/build/distributions/ s3://devroombucket/lambda_snap
 
       # - name: Update Lambda code
       #   run: |
