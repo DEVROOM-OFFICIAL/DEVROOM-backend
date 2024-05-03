@@ -19,7 +19,7 @@ jobs:
           java-version: '21'
 
       - name: Build with Gradle
-        run: ./gradlew buildZip
+        run: gradlew buildZip
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
