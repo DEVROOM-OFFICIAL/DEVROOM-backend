@@ -36,7 +36,7 @@ jobs:
         run: |
           FUNCTION_NAME=devRoomLambda;
           aws lambda update-function-code --function-name $FUNCTION_NAME \
-          --s3-bucket devroombucket --s3-key lambda_snap/dev-room-0.0.1-SNAPSHOT.zip
+          --s3-bucket devroombucket --s3-key lambda_snap/DevRoom-Spring.zip
 
       - name: Update Lambda SnapStart Alias Version
         run: |
