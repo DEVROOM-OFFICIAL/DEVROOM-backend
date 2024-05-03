@@ -37,7 +37,7 @@ out/
 .vscode/
 
 ### k8s confing file ###
-application.properties
+application.properties.old
 
 ### K8S Token file###
 api-token_file
