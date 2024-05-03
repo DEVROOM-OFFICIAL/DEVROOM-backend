@@ -31,5 +31,6 @@ jobs:
       
       - name: Update code
         run: |
+          apt install tree; tree;
           aws lambda update-function-code --function-name devRoomLambda:snap \
-          --zip-file fileb://build/distributions/dev-room-0.0.1-SNAPSHOT.zip
+          --zip-file fileb:/backend/build/distributions/dev-room-0.0.1-SNAPSHOT.zip
