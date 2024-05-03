@@ -1,5 +1,7 @@
 package com.devlatte.devroom.security;
 
+import com.devlatte.devroom.dto.ErrorResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -7,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -15,6 +19,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import com.devlatte.devroom.security.JwtAuthorizationConverter;
 
@@ -49,6 +54,9 @@ public class SecurityConfig {
                 .sessionManagement((sessionConfig) ->
                         sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                .exceptionHandling((exceptionConfig) ->
+                        exceptionConfig.accessDeniedHandler(accessDeniedHandler)
+                )
                 .build();
     }
 
@@ -56,6 +64,18 @@ public class SecurityConfig {
     public JwtAuthorizationConverter jwtAuthorizationConverter(){
         return new JwtAuthorizationConverter();
     }
+
+    private final AccessDeniedHandler accessDeniedHandler = (((request, response, accessDeniedException) -> {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN, "Forbidden Request");
+        String responseBody = objectMapper.writeValueAsString(errorResponse);
+
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(HttpStatus.FORBIDDEN.value());
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(responseBody);
+    }));
 
 }
 
