@@ -3,7 +3,7 @@ name: devroom-lambda-cicd
 on:
   push:
     branches:
-      - feature/githubAction
+      - feature/develop
 
 jobs:
   build-and-deploy:
