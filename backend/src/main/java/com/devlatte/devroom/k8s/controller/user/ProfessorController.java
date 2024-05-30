@@ -40,14 +40,14 @@ public class ProfessorController extends K8sControllerBase {
     }
 
     @PostMapping(value = "/class/{id}/delete", produces = "application/json")
-    public ResponseEntity<String> deleteClass(@RequestBody String requestBody) throws IOException, InterruptedException {
+    public ResponseEntity<String> deleteClass(@RequestBody String requestBody, @PathVariable("id") String professorId) throws IOException, InterruptedException {
         JsonObject jsonObject = gson.fromJson(requestBody, JsonObject.class);
 
         String className = jsonObject.get("className").getAsString();
         JsonArray studentIdsArray = jsonObject.getAsJsonArray("studentIds");
         String studentId  = jsonObject.get("studentId").getAsString();
 
-        return handleResponse(classApi.delete(className, studentId));
+        return handleResponse(classApi.delete(className, studentId, professorId));
     }
     @GetMapping(value = "/class/{id}/pod", produces = "application/json")
     public ResponseEntity<String> getPodByLabel(@PathVariable String id) {
