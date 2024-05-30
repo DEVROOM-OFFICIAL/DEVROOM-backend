@@ -4,8 +4,7 @@ import com.devlatte.devroom.k8s.api.core.*;
 import com.devlatte.devroom.k8s.exception.NoAvailablePortException;
 import com.devlatte.devroom.k8s.utils.FreemarkerTemplate;
 import com.devlatte.devroom.k8s.utils.PortFind;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import freemarker.template.TemplateException;
 import io.fabric8.kubernetes.client.KubernetesClientException;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +16,7 @@ import java.util.*;
 @Service
 public class ClassApi extends K8sApiBase {
     private final DeployApi deployApi;
+    private final PodApi podApi;
     private final ConfigMapApi configMapApi;
     private final ServiceApi serviceApi;
     private final ExecApi execApi;
@@ -31,6 +31,7 @@ public class ClassApi extends K8sApiBase {
                     ConfigMapApi configMapApi,
                     ServiceApi serviceApi,
                     PortFind portFind,
+                    PodApi podApi,
                     @Value("${config.kubernetes.pvHostPath}") String pvHostPath,
                     @Value("${config.kubernetes.pvStudentPath}") String pvStudentPath,
                     @Value("${config.kubernetes.pvTaPath}") String pvTaPath,
@@ -48,6 +49,7 @@ public class ClassApi extends K8sApiBase {
         this.pvStudentPath = pvStudentPath;
         this.pvTaPath = pvTaPath;
         this.cmdServerLabel = cmdServerLabel;
+        this.podApi = podApi;
     }
 
     public String create(String className, String professorId, List<String> studentIds, Map<String, String> options, String[] command, String customScript) {
@@ -112,7 +114,7 @@ public class ClassApi extends K8sApiBase {
             return gson.toJson(errorMap);
         }
 
-        successMap.put("success", successId);
+        successMap.put("created", successId);
         return gson.toJson(successMap);
     }
     private void createService(String className, String studentId, String port, Map<String, String> options, Map<String, String> labels) {
@@ -233,18 +235,33 @@ public class ClassApi extends K8sApiBase {
         }
     }
 
-    public String delete(String className, List<String> studentIds) {
+    public String delete(String className, String studentId) {
         Map<String, List<String>> successMap = new HashMap<>();
         List<String> successId = new ArrayList<>();
+        List<String> studentIds = new ArrayList<>();
         HashMap<String, HashMap<String, String>> errorMap = new HashMap<>();
         HashMap<String, String> errorList = new HashMap<>();
 
-        for (String studentId : studentIds) {
+        if (Objects.equals(studentId, "all")){
+            String podList = podApi.getInfo("class_id", "id-"+className);
+            Gson gson = new Gson();
+            JsonArray jsonArray = gson.fromJson(podList, JsonArray.class);
 
-            String idName = "id-"+studentId+"-"+className;
-            Map<String, String> labels = new HashMap<>();
-            labels.put("class_id", "id-"+className);
-            labels.put("student_id", "id-"+studentId);
+            for (JsonElement element : jsonArray) {
+                JsonObject jsonObject = element.getAsJsonObject();
+                JsonObject labels = jsonObject.getAsJsonObject("labels");
+                String tmpId = labels.get("student_id").getAsString();
+                studentIds.addLast(tmpId);
+            }
+
+        }
+        else{
+            studentIds.addLast("id-"+studentId);
+        }
+
+        for (String id : studentIds) {
+
+            String idName = id+"-"+className;
 
             // 디플로이 제거
             try {
@@ -264,7 +281,7 @@ public class ClassApi extends K8sApiBase {
             } catch (KubernetesClientException e) {
                 errorList.put(idName+"-service", e.getMessage());
             }
-            successId.addLast(studentId);
+            successId.addLast(id.substring(3));
         }
 
         if (!errorList.isEmpty()) {
@@ -272,7 +289,7 @@ public class ClassApi extends K8sApiBase {
             return gson.toJson(errorMap);
         }
 
-        successMap.put("success", successId);
+        successMap.put("deleted", successId);
         return gson.toJson(successMap);
     }
 }

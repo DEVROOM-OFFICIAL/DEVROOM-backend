@@ -45,17 +45,13 @@ public class ProfessorController extends K8sControllerBase {
 
         String className = jsonObject.get("className").getAsString();
         JsonArray studentIdsArray = jsonObject.getAsJsonArray("studentIds");
-        List<String> studentIds = new ArrayList<>();
-        for (JsonElement element : studentIdsArray) studentIds.add(element.getAsString());
+        String studentId  = jsonObject.get("studentId").getAsString();
 
-        return handleResponse(classApi.delete(className, studentIds));
+        return handleResponse(classApi.delete(className, studentId));
     }
     @GetMapping(value = "/class/{id}/pod", produces = "application/json")
     public ResponseEntity<String> getPodByLabel(@PathVariable String id) {
         return handleResponse(podApi.getInfo("professor_id", "id-"+id));
     }
-//    @GetMapping(value = "/class/all/pod", produces = "application/json")
-//    public ResponseEntity<String> getPodAll() {
-//        return handleResponse(podApi.getInfo("all", null));
-//    }
+
 }
