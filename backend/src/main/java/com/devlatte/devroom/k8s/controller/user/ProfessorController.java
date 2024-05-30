@@ -22,8 +22,8 @@ public class ProfessorController extends K8sControllerBase {
     private final ClassApi classApi;
     private final PodApi podApi;
 
-    @PostMapping(value = "/class/create", produces = "application/json")
-    public ResponseEntity<String> createClass(@RequestBody String requestBody) throws IOException, InterruptedException {
+    @PostMapping(value = "/class/{id}/create", produces = "application/json")
+    public ResponseEntity<String> createClass(@RequestBody String requestBody, @PathVariable("id") String professorId) throws IOException, InterruptedException {
         JsonObject jsonObject = gson.fromJson(requestBody, JsonObject.class);
 
         String className = jsonObject.get("className").getAsString();
@@ -36,10 +36,10 @@ public class ProfessorController extends K8sControllerBase {
         String[] command = new String[commandArray.size()];
         for (int i = 0; i < commandArray.size(); i++) command[i] = commandArray.get(i).getAsString();
 
-        return handleResponse(classApi.create(className, studentIds, options, command, customScript));
+        return handleResponse(classApi.create(className, professorId, studentIds, options, command, customScript));
     }
 
-    @PostMapping(value = "/class/delete", produces = "application/json")
+    @PostMapping(value = "/class/{id}/delete", produces = "application/json")
     public ResponseEntity<String> deleteClass(@RequestBody String requestBody) throws IOException, InterruptedException {
         JsonObject jsonObject = gson.fromJson(requestBody, JsonObject.class);
 
@@ -52,10 +52,10 @@ public class ProfessorController extends K8sControllerBase {
     }
     @GetMapping(value = "/class/{id}/pod", produces = "application/json")
     public ResponseEntity<String> getPodByLabel(@PathVariable String id) {
-        return handleResponse(podApi.getInfo("class_id", "id-"+id));
+        return handleResponse(podApi.getInfo("professor_id", "id-"+id));
     }
-    @GetMapping(value = "/class/all/pod", produces = "application/json")
-    public ResponseEntity<String> getPodAll() {
-        return handleResponse(podApi.getInfo("all", null));
-    }
+//    @GetMapping(value = "/class/all/pod", produces = "application/json")
+//    public ResponseEntity<String> getPodAll() {
+//        return handleResponse(podApi.getInfo("all", null));
+//    }
 }
