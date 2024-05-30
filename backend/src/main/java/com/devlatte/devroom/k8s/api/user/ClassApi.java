@@ -66,7 +66,7 @@ public class ClassApi extends K8sApiBase {
 
                 // 포트 자동 할당. false일 경우 순차, true일 경우 랜덤
                 try {
-                    port = portFind.get(true);
+                    port = portFind.get(false);
                 } catch (NoAvailablePortException e) {
                     errorList.put(idName, e.getMessage());
                     errorMap.put("error", errorList);
@@ -235,16 +235,36 @@ public class ClassApi extends K8sApiBase {
         }
     }
 
-    public String delete(String className, String studentId) {
+    public String delete(String className, String studentId, String professorId) {
         Map<String, List<String>> successMap = new HashMap<>();
         List<String> successId = new ArrayList<>();
         List<String> studentIds = new ArrayList<>();
+        List<String> classIds = new ArrayList<>();
         HashMap<String, HashMap<String, String>> errorMap = new HashMap<>();
         HashMap<String, String> errorList = new HashMap<>();
 
+        String professorPodList = podApi.getInfo("professor_id", "id-"+professorId);
+        Gson gson = new Gson();
+        JsonArray classArray = gson.fromJson(professorPodList, JsonArray.class);
+
+        for (JsonElement element : classArray) {
+            JsonObject jsonObject = element.getAsJsonObject();
+            JsonObject labels = jsonObject.getAsJsonObject("labels");
+            String tmpClassId = labels.get("class_id").getAsString().substring(3);
+            classIds.addLast(tmpClassId);
+        }
+
+        try {
+            if (!classIds.contains(className)) {
+                throw new IllegalArgumentException(professorId+" Professor permission denied: "+className);
+            }
+        } catch (IllegalArgumentException e) {
+            errorList.put("error", e.getMessage());
+            return gson.toJson(errorList);
+        }
+
         if (Objects.equals(studentId, "all")){
             String podList = podApi.getInfo("class_id", "id-"+className);
-            Gson gson = new Gson();
             JsonArray jsonArray = gson.fromJson(podList, JsonArray.class);
 
             for (JsonElement element : jsonArray) {

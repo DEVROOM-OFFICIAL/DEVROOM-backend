@@ -44,3 +44,5 @@ for script_file in "$script_dir"/*.sh; do
         echo "---------------------------------------"
     fi
 done
+
+sleep infinity
