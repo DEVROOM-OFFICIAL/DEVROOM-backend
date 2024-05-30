@@ -41,7 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/error").permitAll()
                         // 보안을 위해 k8s에 직접적으로 요청하는 API는 전부 deny
                         .requestMatchers("/core/**").denyAll()
-                        .requestMatchers("/pod/id/{id}","/service/id/{id}","/deploy/id/{id}").access(new WebExpressionAuthorizationManager("hasAuthority('ID_'+#id) and hasAuthority('ROLE_Student')"))
+                        .requestMatchers("/pod/{id}","/service/{id}","/deploy/{id}").access(new WebExpressionAuthorizationManager("hasAuthority('ID_'+#id) and hasAuthority('ROLE_Student')"))
                         .requestMatchers("/class/{id}/**").access(new WebExpressionAuthorizationManager("hasAuthority('ID_'+#id) and hasAuthority('ROLE_Professor')"))
                         .anyRequest().authenticated();
                 })
