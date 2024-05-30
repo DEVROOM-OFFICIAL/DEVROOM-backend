@@ -1,6 +1,5 @@
 package com.devlatte.devroom.security;
 
-import com.devlatte.devroom.dto.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -68,8 +68,9 @@ public class SecurityConfig {
     private final AccessDeniedHandler accessDeniedHandler = (((request, response, accessDeniedException) -> {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN, "Forbidden Request");
-        String responseBody = objectMapper.writeValueAsString(errorResponse);
+        String responseBody = objectMapper.writeValueAsString(
+                ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied")
+        );
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.FORBIDDEN.value());
