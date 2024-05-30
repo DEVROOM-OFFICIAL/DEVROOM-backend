@@ -50,7 +50,7 @@ public class ClassApi extends K8sApiBase {
         this.cmdServerLabel = cmdServerLabel;
     }
 
-    public String create(String className, List<String> studentIds, Map<String, String> options, String[] command, String customScript) {
+    public String create(String className, String professorId, List<String> studentIds, Map<String, String> options, String[] command, String customScript) {
         Map<String, List<String>> successMap = new HashMap<>();
         List<String> successId = new ArrayList<>();
         HashMap<String, HashMap<String, String>> errorMap = new HashMap<>();
@@ -74,6 +74,7 @@ public class ClassApi extends K8sApiBase {
                 Map<String, String> labels = new HashMap<>();
                 labels.put("class_id", "id-"+className);
                 labels.put("student_id", "id-"+studentId);
+                labels.put("professor_id", "id-"+professorId);
 
 
                 // 영구볼륨 경로 확인. 없을 시 생성. ta는 별개의 폴더에 저장.
