@@ -1,0 +1,42 @@
+# environment - Dev, Test or Prod
+environment: Dev
+# whether the host control is enabled
+host_controller_enabled: True
+# port for the Service:
+web_service_port: 8081
+vscode_service_port: 8080
+# type of the Service:
+service_type: LoadBalancer
+# name of cmd server
+cmd_server_name: dev-room-cmd-server
+# main persistent volume
+node_name: dev-room-pv
+pv_group: 
+  - name: dev-room-pv
+  - name: ta-data
+  - name: student-data
+
+pv_capacity: 500Mi
+pv_host_folder_name: dev-room
+pv_student_folder_name: student
+pv_class_folder_name: class
+pv_ta_folder_name: ta
+
+# test class template
+student_mount_path: "/home"
+
+students:
+  # - id: "2024000001"
+  #   classes:
+  #     - name: "JAVA2024"
+  #       service_port: 37001
+  #     - name: "PYTHON2024"
+  #       service_port: 37002
+  # - id: "2024000002"
+  #   classes:
+  #     - name: "JAVA2024"
+  #       service_port: 37003
+  # - id: "2024000003"
+  #   classes:
+  #     - name: "PYTHON2024"
+  #       service_port: 37004

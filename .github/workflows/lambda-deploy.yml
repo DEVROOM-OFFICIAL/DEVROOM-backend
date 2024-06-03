@@ -1,0 +1,45 @@
+name: devroom-lambda-cicd
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Copy application.properties
+        run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./backend/src/main/resources/application.properties
+
+      - name: Build with Gradle
+        run: cd backend;chmod +x gradlew;./gradlew buildZip
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Upload S3 code
+        run: aws s3 sync ./backend/build/distributions/ s3://devroombucket/lambda_snap
+
+      - name: Update Lambda code
+        run: |
+          FUNCTION_NAME=devRoomLambda;
+          aws lambda update-function-code --function-name $FUNCTION_NAME \
+          --s3-bucket devroombucket --s3-key lambda_snap/DevRoom-Spring.zip
+
+      - name: Update Lambda SnapStart Alias Version
+        run: |
+          FUNCTION_NAME=devRoomLambda;
+          VERSION=$(aws lambda publish-version --function-name $FUNCTION_NAME | jq -r .Version);
+          aws lambda update-alias --function-name $FUNCTION_NAME --name snap --function-version $VERSION

@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.cmd_server_name }}-config
+  labels:
+    dev-room: {{ .Values.cmd_server_name }}
+data:
+  # 전체 스크립트 관리
+  init.sh: |-
+    #!/bin/bash
+
+    script_dir=$(dirname "$0")
+    echo "스크립트 폴더: $script_dir"
+
+    for script_file in "$script_dir"/*.sh; do
+        # 현재 실행 중인 스크립트와 같은 파일이 아닌 경우에만 실행
+        if [ "$script_file" != "$0" ]; then
+            echo "실행 스크립트 파일: $script_file"
+            bash "$script_file" >> /script/log
+            echo "---------------------------------------"
+        fi
+    done
+
+  # 영구 볼륨 폴더 생성용 스크립트
+  01_init_storage.sh: |-
+    #!/bin/bash
+    
+    host_folder_name={{ .Values.pv_host_folder_name }}
+    class_folder_name={{ .Values.pv_class_folder_name }}
+    student_folder_name={{ .Values.pv_student_folder_name }}
+    ta_folder_name={{ .Values.pv_ta_folder_name }}
+
+    if [ -d "/host/$host_folder_name" ]; then
+        echo "Host 볼륨 폴더가 이미 존재합니다."
+    else
+        mkdir "/host/$host_folder_name"
+        echo "Host 볼륨 폴더가 생성되었습니다."
+    fi
+
+    if [ -d "/host/$host_folder_name/$class_folder_name" ]; then
+        echo "class 볼륨 폴더가 이미 존재합니다."
+    else
+        mkdir "/host/$host_folder_name/$class_folder_name"
+        echo "class 볼륨 폴더가 생성되었습니다."
+    fi
+
+    if [ -d "/host/$host_folder_name/$student_folder_name" ]; then
+        echo "student 볼륨 폴더가 이미 존재합니다."
+    else
+        mkdir "/host/$host_folder_name/$student_folder_name"
+        echo "student 볼륨 폴더가 생성되었습니다."
+    fi
+
+    if [ -d "/host/$host_folder_name/$ta_folder_name" ]; then
+        echo "ta 볼륨 폴더가 이미 존재합니다."
+    else
+        mkdir "/host/$host_folder_name/$ta_folder_name"
+        echo "ta 볼륨 폴더가 생성되었습니다."
+    fi
+
+
+  02_make_test_class.sh: |-
+    #!/bin/bash
+
+    host_folder_name={{ .Values.pv_host_folder_name }}
+    student_folder_name={{ .Values.pv_student_folder_name }}
+
+    {{- range $student := .Values.students }}
+
+    if [ -d "/host/$host_folder_name/$student_folder_name/{{ $student.id }}" ]; then
+            echo "{{ $student.id }} 볼륨 폴더가 이미 존재합니다."
+    else
+        mkdir "/host/$host_folder_name/$student_folder_name/{{ $student.id }}"
+        echo "{{ $student.id }} 볼륨 폴더가 생성되었습니다."
+    fi
+
+    {{- end }}
+
+
+
