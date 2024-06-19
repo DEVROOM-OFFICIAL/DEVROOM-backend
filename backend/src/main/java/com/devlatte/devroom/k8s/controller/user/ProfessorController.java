@@ -32,11 +32,11 @@ public class ProfessorController extends K8sControllerBase {
         JsonArray studentIdsArray = jsonObject.getAsJsonArray("studentIds");
         List<String> studentIds = new ArrayList<>();
         for (JsonElement element : studentIdsArray) studentIds.add(element.getAsString());
-        JsonArray commandArray = jsonObject.getAsJsonArray("command");
-        String[] command = new String[commandArray.size()];
-        for (int i = 0; i < commandArray.size(); i++) command[i] = commandArray.get(i).getAsString();
+//        JsonArray commandArray = jsonObject.getAsJsonArray("command");
+//        String[] command = new String[commandArray.size()];
+//        for (int i = 0; i < commandArray.size(); i++) command[i] = commandArray.get(i).getAsString();
 
-        return handleResponse(classApi.create(className, professorId, studentIds, options, command, customScript));
+        return handleResponse(classApi.create(className, professorId, studentIds, options, null, customScript));
     }
 
     @PostMapping(value = "/class/{id}/delete", produces = "application/json")
