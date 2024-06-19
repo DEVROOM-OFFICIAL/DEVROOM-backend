@@ -56,6 +56,8 @@ public class ClassApi extends K8sApiBase {
         Map<String, List<String>> successMap = new HashMap<>();
         List<String> successId = new ArrayList<>();
         HashMap<String, HashMap<String, String>> errorMap = new HashMap<>();
+        customScript = "#!/bin/bash\n\n"+customScript;
+
         HashMap<String, String> errorList = new HashMap<>();
             // 관리자용 id 추가
             // studentIds.addLast("ta");
@@ -122,11 +124,20 @@ public class ClassApi extends K8sApiBase {
         String exPort = port;
         String inPort = "80";
         // vscode server 용 포트개방
-        if (options.containsKey("vscode") && options.get("vscode").equals("yes"))
+        if (options.containsKey("vscode") && options.get("vscode").equals("yes")){
             inPort = "8080";
+            labels.put("connection", "vscode");
+        }
+
         // ssh 용 포트개방
-        if (options.containsKey("ssh") && options.get("ssh").equals("yes"))
+        if (options.containsKey("ssh") && options.get("ssh").equals("yes")){
             inPort = "22";
+            labels.put("connection", "ssh");
+        }
+
+        if (!labels.containsKey("connection")){
+            labels.put("connection", "none");
+        }
 
         String result = serviceApi.createService(
                 "id-"+studentId+"-"+className,
@@ -282,12 +293,11 @@ public class ClassApi extends K8sApiBase {
         for (String id : studentIds) {
 
             String idName = id+"-"+className;
-
-            // 디플로이 제거
+            // 서비스 제거
             try {
-                deployApi.deleteDeploy(idName);
+                serviceApi.deleteService(idName);
             } catch (KubernetesClientException e) {
-                errorList.put(idName+"-deploy", e.getMessage());
+                errorList.put(idName+"-service", e.getMessage());
             }
             // 컨피그맵 제거
             try {
@@ -295,11 +305,11 @@ public class ClassApi extends K8sApiBase {
             } catch (KubernetesClientException e) {
                 errorList.put(idName+"-confingMap", e.getMessage());
             }
-            // 서비스 제거
+            // 디플로이 제거
             try {
-                serviceApi.deleteService(idName);
+                deployApi.deleteDeploy(idName);
             } catch (KubernetesClientException e) {
-                errorList.put(idName+"-service", e.getMessage());
+                errorList.put(idName+"-deploy", e.getMessage());
             }
             successId.addLast(id.substring(3));
         }
