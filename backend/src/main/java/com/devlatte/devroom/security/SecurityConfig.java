@@ -22,6 +22,13 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import com.devlatte.devroom.security.JwtAuthorizationConverter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collections;
 
 @Slf4j
 @EnableWebSecurity(debug = true)
@@ -36,6 +43,9 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return http
+                .cors(corsCustomizer -> corsCustomizer
+                        .configurationSource(corsConfigurationSource())
+                )
                 .authorizeHttpRequests(auth ->{
                     auth
                         .requestMatchers("/", "/error").permitAll()
@@ -63,6 +73,20 @@ public class SecurityConfig {
     @Bean
     public JwtAuthorizationConverter jwtAuthorizationConverter(){
         return new JwtAuthorizationConverter();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource(){
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000/", "https://home.devroom.online/onboarding"));
+        corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
+        corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
+        corsConfiguration.setMaxAge(Duration.ofMinutes(5L));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+
+        return source;
     }
 
     private final AccessDeniedHandler accessDeniedHandler = (((request, response, accessDeniedException) -> {
