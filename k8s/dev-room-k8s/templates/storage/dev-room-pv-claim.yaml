@@ -10,5 +10,6 @@ spec:
   resources:
     requests:
       storage: {{ $.Values.pv_capacity }}
+  volumeName: {{ $pv.name }}
   storageClassName: ""
 {{- end }}
