@@ -8,6 +8,13 @@ sudo chmod 755 install_k3s_agent.sh
 git email 설정
 git config --global user.email "hdyang0686@naver.com"
 git config --global user.name "Yanghyeondong"
+
+Gcp 인스턴스 설정
+VM 인스턴스 -> 네크워크 세부정보 보기
+-> IP 주소 (외부고정IP 할당)
+-> 방화벽 -> 상단에 방화벽 규칙 만들기 -> 0.0.0.0/0 tcp:3000, 6443, 37001-37500
+
+sudo 없이 그냥 ./install_k3s_server.sh 하면 됨.
 '
 
 # install k8s
