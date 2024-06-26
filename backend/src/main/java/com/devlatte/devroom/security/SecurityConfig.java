@@ -78,7 +78,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000/", "https://home.devroom.online/onboarding"));
+        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://home.devroom.online/onboarding"));
         corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
         corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
         corsConfiguration.setMaxAge(Duration.ofMinutes(5L));
