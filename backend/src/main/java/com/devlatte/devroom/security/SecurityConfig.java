@@ -81,6 +81,7 @@ public class SecurityConfig {
         corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://home.devroom.online/onboarding"));
         corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
         corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
+        corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setMaxAge(Duration.ofMinutes(5L));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
