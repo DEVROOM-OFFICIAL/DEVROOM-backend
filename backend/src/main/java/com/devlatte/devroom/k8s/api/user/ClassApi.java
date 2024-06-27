@@ -79,6 +79,7 @@ public class ClassApi extends K8sApiBase {
                 labels.put("class_id", "id-"+className);
                 labels.put("student_id", "id-"+studentId);
                 labels.put("professor_id", "id-"+professorId);
+                labels.put("port", "port-"+port);
 
 
                 // 영구볼륨 경로 확인. 없을 시 생성. ta는 별개의 폴더에 저장.
