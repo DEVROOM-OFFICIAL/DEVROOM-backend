@@ -83,10 +83,11 @@ public class ClassApi extends K8sApiBase {
 
                 // 영구볼륨 경로 확인. 없을 시 생성. ta는 별개의 폴더에 저장.
                 try {
-                    String path = Objects.equals(studentId, "ta") ?
-                            "/host/"+pvHostPath+"/"+pvTaPath+"/"+className :
-                            "/host/"+pvHostPath+"/"+pvStudentPath+"/"+studentId;
-                    execApi.run("app", cmdServerLabel, new String[]{"/bin/sh", "-c", "mkdir "+path});
+                    String ta_path = "/host/"+pvHostPath+"/"+pvTaPath+"/"+className;
+                    execApi.run("app", cmdServerLabel, new String[]{"/bin/sh", "-c", "mkdir "+ta_path});
+                    String student_path = "/host/"+pvHostPath+"/"+pvStudentPath+"/"+studentId;
+                    execApi.run("app", cmdServerLabel, new String[]{"/bin/sh", "-c", "mkdir "+student_path});
+
                 } catch (KubernetesClientException | IOException | InterruptedException e) {
                     errorList.put(idName+"-execApi", e.getMessage());
                 }
