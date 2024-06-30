@@ -27,14 +27,37 @@ public class ProfessorController extends K8sControllerBase {
         JsonObject jsonObject = gson.fromJson(requestBody, JsonObject.class);
 
         String className = jsonObject.get("className").getAsString();
-        String customScript = jsonObject.get("customScript").getAsString();
+//        String customScript = jsonObject.get("customScript").getAsString();
         Map<String, String> options = response2Map(jsonObject, "options");
         JsonArray studentIdsArray = jsonObject.getAsJsonArray("studentIds");
         List<String> studentIds = new ArrayList<>();
         for (JsonElement element : studentIdsArray) studentIds.add(element.getAsString());
-//        JsonArray commandArray = jsonObject.getAsJsonArray("command");
-//        String[] command = new String[commandArray.size()];
-//        for (int i = 0; i < commandArray.size(); i++) command[i] = commandArray.get(i).getAsString();
+        JsonArray customScriptArray = jsonObject.getAsJsonArray("customScript");
+        String customScript = "";
+
+        for (int i = 0; i < customScriptArray.size(); i++) {
+            String temp = customScriptArray.get(i).getAsString();
+
+            if (temp.equals("python")) {
+                customScript += "\n apt install -y python3 python3-pip";
+            }
+            else if (temp.equals("vim")) {
+                customScript += "\n apt install -y vim";
+            }
+            else if (temp.equals("nodejs")) {
+                customScript += "\n apt install -y nodejs npm";
+            }
+            else if (temp.equals("ruby")) {
+                customScript += "\n apt install -y ruby-full";
+            }
+            else if (temp.equals("golang")) {
+                customScript += "\n apt install -y golang";
+            }
+            else if (temp.equals("nginx")) {
+                customScript += "\n apt install -y nginx";
+            }
+
+        }
 
         return handleResponse(classApi.create(className, professorId, studentIds, options, null, customScript));
     }
