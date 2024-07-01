@@ -204,7 +204,6 @@ spec:
           args:
             #- --auto-generate-certificates
             - --namespace=kubernetes-dashboard
-            - --enable-skip-login=true
             - --disable-settings-authorizer=true
             - --enable-insecure-login=true
             - --insecure-bind-address=0.0.0.0
