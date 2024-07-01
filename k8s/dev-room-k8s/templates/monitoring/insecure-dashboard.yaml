@@ -204,9 +204,9 @@ spec:
           args:
             #- --auto-generate-certificates
             - --namespace=kubernetes-dashboard
-            - --enable-skip-login
-            - --disable-settings-authorizer
-            - --enable-insecure-login
+            - --enable-skip-login=true
+            - --disable-settings-authorizer=true
+            - --enable-insecure-login=true
             - --insecure-bind-address=0.0.0.0
             # Uncomment the following line to manually specify Kubernetes API server Host
             # If not specified, Dashboard will attempt to auto discover the API server and connect
@@ -279,8 +279,10 @@ spec:
     metadata:
       labels:
         k8s-app: dashboard-metrics-scraper
-      annotations:
-        seccomp.security.alpha.kubernetes.io/pod: 'runtime/default'
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
     spec:
       containers:
         - name: dashboard-metrics-scraper
