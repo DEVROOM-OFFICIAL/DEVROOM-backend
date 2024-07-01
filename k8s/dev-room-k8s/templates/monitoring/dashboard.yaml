@@ -37,10 +37,11 @@ metadata:
   name: kubernetes-dashboard
   namespace: kubernetes-dashboard
 spec:
-  type: LoadBalancer
+  type: NodePort
   ports:
     - port: 443
-      targetPort: 3001
+      targetPort: 8443
+      nodePort: 3001
   selector:
     k8s-app: kubernetes-dashboard
 
