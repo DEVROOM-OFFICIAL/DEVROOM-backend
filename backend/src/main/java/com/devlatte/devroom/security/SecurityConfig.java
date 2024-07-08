@@ -44,10 +44,10 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return http
-
+                /*
                 .cors(cors->cors.configurationSource(corsConfigurationSource())
                 )
-
+                */
                 .authorizeHttpRequests(auth ->{
                     auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/", "/error").permitAll()
@@ -76,6 +76,8 @@ public class SecurityConfig {
     public JwtAuthorizationConverter jwtAuthorizationConverter(){
         return new JwtAuthorizationConverter();
     }
+
+    /*
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration corsConfiguration = new CorsConfiguration();
@@ -91,6 +93,7 @@ public class SecurityConfig {
 
         return source;
     }
+    */
 
     private final AccessDeniedHandler accessDeniedHandler = (((request, response, accessDeniedException) -> {
         ObjectMapper objectMapper = new ObjectMapper();
