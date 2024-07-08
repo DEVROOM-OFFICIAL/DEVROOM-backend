@@ -210,7 +210,7 @@ public class ClassApi extends K8sApiBase {
             publicVolume.put("pvPath", pvHostPath+"/"+pvTaPath+"/"+className);
             publicVolume.put("mountPath", "/home/"+studentId+"-"+className+"/"+className);
             publicVolume.put("isReadOnly", "false");
-            volumes.put("ta-data", publicVolume);
+            // volumes.put("ta-data", publicVolume);
         }
         else {
             // student용 수정 불가능 ta폴더
@@ -218,7 +218,7 @@ public class ClassApi extends K8sApiBase {
             publicVolume.put("pvPath", pvHostPath+"/"+pvTaPath+"/"+className);
             publicVolume.put("mountPath", "/home/"+studentId+"-"+className+"/"+className);
             publicVolume.put("isReadOnly", "true");
-            volumes.put("ta-data", publicVolume);
+            // volumes.put("ta-data", publicVolume);
 
             // student용 수정 가능 student폴더
             Map<String, String> privateVolume = new HashMap<>();
