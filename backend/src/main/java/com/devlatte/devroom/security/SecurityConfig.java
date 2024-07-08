@@ -45,8 +45,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return http
 
-                .cors(corsCustomizer -> corsCustomizer
-                        .configurationSource(corsConfigurationSource())
+                .cors(cors->cors.configurationSource(corsConfigurationSource())
                 )
 
                 .authorizeHttpRequests(auth ->{
