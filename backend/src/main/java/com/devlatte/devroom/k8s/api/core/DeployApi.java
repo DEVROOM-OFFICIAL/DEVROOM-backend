@@ -135,7 +135,7 @@ public class DeployApi extends K8sApiBase {
                         .addToRequests("cpu", new Quantity(cpuReq))
 //                        .addToLimits("cpu", new Quantity(cpuLimit))
                         .addToRequests("memory", new Quantity(memReq)) // RAM request
-                        .addToLimits("memory", new Quantity(memLimit))     // RAM limit
+                        // .addToLimits("memory", new Quantity(memLimit))     // RAM limit
                         .build())
                         .withVolumeMounts(volumeMounts)
                         .withCommand(command)
