@@ -165,12 +165,12 @@ public class DeployApi extends K8sApiBase {
                         .withLabel("app", deployName) // Assumes pods have a label 'app' with the deployment name
                         .list()
                         .getItems();
-                for (Pod pod : pods) k8s.pods().inNamespace("default").withName(pod.getMetadata().getName()).withGracePeriod(0).delete();
+                for (Pod pod : pods) k8s.pods().inNamespace("default").withName(pod.getMetadata().getName()).delete();
 
-                k8s.apps().deployments().inNamespace("default").withName(deployName).withGracePeriod(0).delete();
+                k8s.apps().deployments().inNamespace("default").withName(deployName).delete();
                 HashMap<String, String> successMap = new HashMap<>();
 
-                for (Pod pod : pods) k8s.pods().inNamespace("default").withName(pod.getMetadata().getName()).withGracePeriod(0).delete();
+                for (Pod pod : pods) k8s.pods().inNamespace("default").withName(pod.getMetadata().getName()).delete();
 
                 successMap.put("success", "Deploy deleted successfully");
                 return gson.toJson(successMap);

@@ -68,7 +68,7 @@ public class ConfigMapApi extends K8sApiBase { // Rename class to ConfigMapApi
     public String deleteConfigMap(String configMapName) {
         try {
             if (k8s.configMaps().inNamespace("default").withName(configMapName).get() != null) {
-                k8s.configMaps().inNamespace("default").withName(configMapName).withGracePeriod(0).delete();
+                k8s.configMaps().inNamespace("default").withName(configMapName).delete();
                 HashMap<String, String> successMap = new HashMap<>();
                 successMap.put("success", "ConfigMap deleted successfully");
                 return gson.toJson(successMap);
