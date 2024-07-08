@@ -80,7 +80,7 @@ public class ServiceApi extends K8sApiBase { // Rename class to ServiceApi
     public String deleteService(String serviceName) {
         try {
             if (k8s.services().inNamespace("default").withName(serviceName).get() != null) {
-                k8s.services().inNamespace("default").withName(serviceName).withGracePeriod(0).delete();
+                k8s.services().inNamespace("default").withName(serviceName).delete();
                 HashMap<String, String> successMap = new HashMap<>();
                 successMap.put("success", "Service deleted successfully");
                 return gson.toJson(successMap);

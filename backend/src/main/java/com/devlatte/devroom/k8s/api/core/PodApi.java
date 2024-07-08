@@ -74,7 +74,7 @@ public class PodApi extends K8sApiBase { // Rename class to PodApi
     public String deletePod(String podName) {
         try {
             if (k8s.pods().inNamespace("default").withName(podName).get() != null) {
-                k8s.pods().inNamespace("default").withName(podName).withGracePeriod(0).delete();
+                k8s.pods().inNamespace("default").withName(podName).delete();
                 HashMap<String, String> successMap = new HashMap<>();
                 successMap.put("success", "Pod deleted successfully");
                 return gson.toJson(successMap);
