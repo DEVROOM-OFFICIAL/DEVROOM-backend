@@ -16,7 +16,7 @@ pv_group:
   - name: ta-data
   - name: student-data
 
-pv_capacity: 5Gi
+pv_capacity: 2Gi
 pv_host_folder_name: dev-room
 pv_student_folder_name: student
 pv_class_folder_name: class
