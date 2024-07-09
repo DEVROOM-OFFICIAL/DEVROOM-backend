@@ -30,7 +30,8 @@ spec:
               cp -r /app/config /script
               chmod +x /script/init.sh
               /script/init.sh >> /script/log
-              tail -f /dev/null
+              trap "echo 'SIGTERM received'; exit 0" SIGTERM
+              sleep infinity
 
       volumes:
         - name: config

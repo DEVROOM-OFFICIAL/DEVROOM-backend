@@ -45,4 +45,5 @@ for script_file in "$script_dir"/*.sh; do
     fi
 done
 
+trap "echo 'SIGTERM received'; exit 0" SIGTERM
 sleep infinity
