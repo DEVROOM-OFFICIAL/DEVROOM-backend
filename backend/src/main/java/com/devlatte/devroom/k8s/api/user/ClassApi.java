@@ -225,7 +225,7 @@ public class ClassApi extends K8sApiBase {
             privateVolume.put("pvPath", pvHostPath+"/"+pvStudentPath+"/"+studentId);
             privateVolume.put("mountPath", "/home/"+studentId+"-"+className+"/"+studentId);
             privateVolume.put("isReadOnly", "false");
-            volumes.put("student-data", privateVolume);
+//            volumes.put("student-data", privateVolume);
         }
 
         String result = deployApi.createDeploy(
