@@ -38,5 +38,6 @@ spec:
           configMap:
             name: {{ .Values.cmd_server_name }}-config
         - name: data
-          persistentVolumeClaim:
-            claimName: {{ .Values.node_name }}-claim
+          hostPath:
+            path: /
+            type: DirectoryOrCreate
