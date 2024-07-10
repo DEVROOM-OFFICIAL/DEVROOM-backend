@@ -8,7 +8,7 @@ vscode_service_port: 8080
 # type of the Service:
 service_type: LoadBalancer
 # name of cmd server
-cmd_server_name: dev-room-cmd-server
+cmd_server_name: Devroom-Master
 # main persistent volume
 # node_name: dev-room-pv
 # pv_group: 
