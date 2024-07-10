@@ -21,10 +21,10 @@ public class ClassApi extends K8sApiBase {
     private final ServiceApi serviceApi;
     private final ExecApi execApi;
     private final PortFind portFind;
-    private final String pvHostPath;
-    private final String pvStudentPath;
+    private final String volumeHostPath;
+    private final String volumeStudentPath;
     private final String cmdServerLabel;
-    private final String pvTaPath;
+    private final String volumeTaPath;
 
     public ClassApi(DeployApi deployApi,
                     ExecApi execApi,
@@ -32,9 +32,9 @@ public class ClassApi extends K8sApiBase {
                     ServiceApi serviceApi,
                     PortFind portFind,
                     PodApi podApi,
-                    @Value("${config.kubernetes.pvHostPath}") String pvHostPath,
-                    @Value("${config.kubernetes.pvStudentPath}") String pvStudentPath,
-                    @Value("${config.kubernetes.pvTaPath}") String pvTaPath,
+                    @Value("${config.kubernetes.volumeHostPath}") String volumeHostPath,
+                    @Value("${config.kubernetes.volumeStudentPath}") String volumeStudentPath,
+                    @Value("${config.kubernetes.volumeTaPath}") String volumeTaPath,
                     @Value("${config.kubernetes.cmdServerLabel}") String cmdServerLabel,
                     @Value("${config.kubernetes.url}") String apiServer,
                     @Value("${config.kubernetes.token}") String apiToken
@@ -45,9 +45,9 @@ public class ClassApi extends K8sApiBase {
         this.configMapApi = configMapApi;
         this.serviceApi = serviceApi;
         this.portFind = portFind;
-        this.pvHostPath = pvHostPath;
-        this.pvStudentPath = pvStudentPath;
-        this.pvTaPath = pvTaPath;
+        this.volumeHostPath = volumeHostPath;
+        this.volumeStudentPath = volumeStudentPath;
+        this.volumeTaPath = volumeTaPath;
         this.cmdServerLabel = cmdServerLabel;
         this.podApi = podApi;
     }
@@ -84,9 +84,9 @@ public class ClassApi extends K8sApiBase {
 
                 // 영구볼륨 경로 확인. 없을 시 생성. ta는 별개의 폴더에 저장.
                 try {
-                    String ta_path = "/host/"+pvHostPath+"/"+pvTaPath+"/"+className;
+                    String ta_path = "/host/"+volumeHostPath+"/"+volumeTaPath+"/"+className;
                     execApi.run("app", cmdServerLabel, new String[]{"/bin/sh", "-c", "mkdir "+ta_path});
-                    String student_path = "/host/"+pvHostPath+"/"+pvStudentPath+"/"+studentId;
+                    String student_path = "/host/"+volumeHostPath+"/"+volumeStudentPath+"/"+studentId;
                     execApi.run("app", cmdServerLabel, new String[]{"/bin/sh", "-c", "mkdir "+student_path});
 
                 } catch (KubernetesClientException | IOException | InterruptedException e) {
@@ -207,25 +207,25 @@ public class ClassApi extends K8sApiBase {
         if (Objects.equals(studentId, "ta")){
             // ta용 수정가능 ta폴더
             Map<String, String> publicVolume = new HashMap<>();
-            publicVolume.put("pvPath", pvHostPath+"/"+pvTaPath+"/"+className);
-            publicVolume.put("mountPath", "/home/"+studentId+"-"+className+"/"+className);
+            publicVolume.put("hostPath", volumeHostPath+"/"+volumeTaPath+"/"+className);
+            publicVolume.put("mountPath", "/devroom_mnt/"+className);
             publicVolume.put("isReadOnly", "false");
-            // volumes.put("ta-data", publicVolume);
+            volumes.put("ta-data", publicVolume);
         }
         else {
             // student용 수정 불가능 ta폴더
             Map<String, String> publicVolume = new HashMap<>();
-            publicVolume.put("pvPath", pvHostPath+"/"+pvTaPath+"/"+className);
-            publicVolume.put("mountPath", "/home/"+studentId+"-"+className+"/"+className);
+            publicVolume.put("hostPath", volumeHostPath+"/"+volumeTaPath+"/"+className);
+            publicVolume.put("mountPath", "/devroom_mnt/"+className);
             publicVolume.put("isReadOnly", "true");
-            // volumes.put("ta-data", publicVolume);
+            volumes.put("ta-data", publicVolume);
 
             // student용 수정 가능 student폴더
             Map<String, String> privateVolume = new HashMap<>();
-            privateVolume.put("pvPath", pvHostPath+"/"+pvStudentPath+"/"+studentId);
-            privateVolume.put("mountPath", "/home/"+studentId+"-"+className+"/"+studentId);
+            privateVolume.put("hostPath", volumeHostPath+"/"+volumeStudentPath+"/"+studentId);
+            privateVolume.put("mountPath", "/devroom_mnt/"+studentId);
             privateVolume.put("isReadOnly", "false");
-//            volumes.put("student-data", privateVolume);
+            volumes.put("student-data", privateVolume);
         }
 
         String result = deployApi.createDeploy(

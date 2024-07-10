@@ -33,6 +33,9 @@ if [ -f ~/.profile ]; then
 fi
 EOF
 
+ln -s /devroom_mnt/$student_id $student_folder_path/$student_id
+ln -s /devroom_mnt/$class_id $student_folder_path/$class_id
+
 script_dir=$(dirname "$0")
 echo "스크립트 폴더: $script_dir"
 
