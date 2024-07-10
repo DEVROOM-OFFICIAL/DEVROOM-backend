@@ -68,10 +68,10 @@ done
 
 chmod 600 ~/.kube/config
 
-# 클러스터의 특정 노드에 레이블 부여
-kubectl label node $(kubectl get nodes -o jsonpath='{.items[0].metadata.name}') storage=dev-room-pv
-# 레이블 셀렉터로 노드의 존재 확인
-kubectl get nodes -l storage=dev-room-pv
+# # 클러스터의 특정 노드에 레이블 부여
+# kubectl label node $(kubectl get nodes -o jsonpath='{.items[0].metadata.name}') storage=dev-room-pv
+# # 레이블 셀렉터로 노드의 존재 확인
+# kubectl get nodes -l storage=dev-room-pv
 
 # 스크립트를 사용한 헬름 설치
 echo "Install Helm..."
