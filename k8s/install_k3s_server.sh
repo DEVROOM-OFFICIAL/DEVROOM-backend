@@ -6,6 +6,11 @@ sudo chmod 755 install_k3s_server.sh
 sudo chmod 755 install_k3s_agent.sh
 
 git email 설정
+git clone https://github.com/Yanghyeondong/DEV-ROOM
+cd DEV-ROOM
+git branch -a
+git checkout -b develop remotes/origin/develop
+git pull
 git config --global user.email "hdyang0686@naver.com"
 git config --global user.name "Yanghyeondong"
 
