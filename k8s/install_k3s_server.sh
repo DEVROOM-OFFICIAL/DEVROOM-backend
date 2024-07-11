@@ -1,17 +1,19 @@
 #!/bin/bash
 
 : '
-sudo chmod 755 install_k3s_server.sh
-sudo chmod 755 install_k3s_agent.sh
-
-git clone https://github.com/Yanghyeondong/DEV-ROOM
-cd DEV-ROOM
-git branch -a
-git checkout -b develop remotes/origin/develop
-git pull
 git config --global user.email "hdyang0686@naver.com"
 git config --global user.name "Yanghyeondong"
+git clone https://github.com/Yanghyeondong/DEV-ROOM
+cd DEV-ROOM
+git checkout -b develop remotes/origin/develop
+git branch -a
+
+cd k8s/
+sudo chmod 755 install_k3s_server.sh
+sudo chmod 755 install_k3s_agent.sh
 ./install_k3s_server.sh
+
+========================================================
 
 Gcp 인스턴스 설정
 
@@ -38,10 +40,11 @@ LINE="===================="
 # install nfs
 echo "${LINE} Install nfs... ${LINE}"
 read -p "Enter the nfs address: " mynfs
-sudo apt install -y nfs-common >> install.log
+sudo apt install -y nfs-common > install.log 2>&1
 sudo mkdir -p /dev-room >> install.log
-sudo mount ${mynfs} /dev-room  >> install.log
-sudo chmod 777 /dev-room
+sudo mount ${mynfs} /dev-room >> install.log
+sudo chmod -R 777 /dev-room >> install.log
+ls -al /dev-room
 
 # install k8s
 echo "${LINE} Install k3s... ${LINE}"
