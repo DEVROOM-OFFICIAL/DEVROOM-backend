@@ -1,11 +1,9 @@
 #!/bin/bash
 
 : '
-스크립트 권한 설정
 sudo chmod 755 install_k3s_server.sh
 sudo chmod 755 install_k3s_agent.sh
 
-git email 설정
 git clone https://github.com/Yanghyeondong/DEV-ROOM
 cd DEV-ROOM
 git branch -a
@@ -13,27 +11,46 @@ git checkout -b develop remotes/origin/develop
 git pull
 git config --global user.email "hdyang0686@naver.com"
 git config --global user.name "Yanghyeondong"
+./install_k3s_server.sh
 
 Gcp 인스턴스 설정
-VM 인스턴스 -> 네크워크 세부정보 보기
--> IP 주소 (외부고정IP 할당)
--> 방화벽 -> 상단에 방화벽 규칙 만들기 -> 0.0.0.0/0 tcp:3000, 6443, 37001-37500
 
+FileStore : devroom-k3s-nfs
+-> 활성화, 인스턴스만들기
+-> asia-northeast3
+-> VPC default
+-> 파일공유 이름 devroom_nfs
+-> nfs 마운트 지점 확인하기 ex.) 10.180.81.34:/devroom_nfs
+
+VM 인스턴스 : devroom-k3s-01
+-> 네크워크 세부정보 보기
+-> IP 주소 (외부고정IP 할당) : devroom-k3s-api
+-> 기존 IP의 경우, 생성할때나 세부정보에서 네트워크 탭 확장
+-> 방화벽 상단에 방화벽 규칙 만들기 0.0.0.0/0 tcp:3000, 6443, 37001-37500
 -> 디스크만 교체도 가능
-
--> 기존 외부고정IP 활용시, 인스턴스 세부설정 -> 네트워크 폴드 열어서 수정
-
-sudo 없이 그냥 ./install_k3s_server.sh 하면 됨.
+-> 기존 외부고정IP 활용시, 인스턴스 세부설정 
+-> 네트워크 폴드 열어서 수정
+-> clean 이미지 저장해놓기
 '
 
+LINE="===================="
+
+# install nfs
+echo "${LINE} Install nfs... ${LINE}"
+read -p "Enter the nfs address: " mynfs
+sudo apt install -y nfs-common >> install.log
+sudo mkdir -p /dev-room >> install.log
+sudo mount ${mynfs} /dev-room  >> install.log
+sudo chmod 777 /dev-room
+
 # install k8s
-echo "Install k3s..."
-curl -sfL https://get.k3s.io | sh -s - --disable=traefik --write-kubeconfig-mode=644 > k3s_install.log
+echo "${LINE} Install k3s... ${LINE}"
+curl -sfL https://get.k3s.io | sh -s - --disable=traefik --write-kubeconfig-mode=644 >> install.log
 
 echo "wait for 30s..."
 sleep 30
 
-echo "Make k3s Token..."
+echo "${LINE} Make k3s Token... ${LINE}"
 # 기본 서비스 어카운트용 토큰을 보관할 시크릿을 생성한다.
 kubectl apply -f - <<EOF
 apiVersion: v1
@@ -74,15 +91,13 @@ chmod 600 ~/.kube/config
 # kubectl get nodes -l storage=dev-room-pv
 
 # 스크립트를 사용한 헬름 설치
-echo "Install Helm..."
-curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash  > Helm_install.log
-# 헬름 버전 확인
-helm version
+echo "${LINE} Install Helm... ${LINE}"
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash >> install.log
 
 # 차트에 들어갈 파일의 유효성을 검증
-helm lint dev-room-k8s
+helm lint dev-room-k8s >> install.log
 # 차트 디렉터리에서 릴리스를 설치
-helm install dev-room-k8s dev-room-k8s/
+helm install dev-room-k8s dev-room-k8s/ >> install.log
 # 설치된 릴리스의 상태를 확인
 helm ls
 
