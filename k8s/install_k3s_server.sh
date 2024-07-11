@@ -37,13 +37,16 @@ VM 인스턴스 : devroom-k3s-01
 
 LINE="===================="
 
+
 # install nfs
 echo "${LINE} Install nfs... ${LINE}"
 read -p "Enter the nfs address: " mynfs
-sudo apt install -y nfs-common > install.log 2>&1
+sudo apt install -y nfs-common >> install.log 2>&1
+sudo apt install -y acl >> install.log 2>&1
 sudo mkdir -p /dev-room >> install.log
 sudo mount ${mynfs} /dev-room >> install.log
-sudo chmod -R 777 /dev-room >> install.log
+current_user=$(whoami)
+sudo setfacl -R -d -m u:$current_user:rwx /dev-room
 ls -al /dev-room
 
 # install k8s
