@@ -25,7 +25,7 @@ cmd_server_name: devroom-master
 host_folder_name: dev-room
 student_folder_name: student
 class_folder_name: class
-ta_folder_name: ta
+# ta_folder_name: ta
 
 # test class template
 student_mount_path: "/home"
