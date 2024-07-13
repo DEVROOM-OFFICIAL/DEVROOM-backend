@@ -103,7 +103,7 @@ public class DeployApi extends K8sApiBase {
                     .withName(volumeName)
                     .withHostPath(new HostPathVolumeSourceBuilder()
                             .withPath("/"+hostPath)
-                            .withType("Directory")  // 필요에 따라 "Directory", "File" 등으로 설정 가능
+                            .withType("DirectoryOrCreate")  // 필요에 따라 "Directory", "File" 등으로 설정 가능
                             .build())
                     .build();
             volumesList.add(volume);
@@ -161,16 +161,8 @@ public class DeployApi extends K8sApiBase {
         try {
             if (k8s.apps().deployments().inNamespace("default").withName(deployName).get() != null) {
 
-                // List<Pod> pods = k8s.pods().inNamespace("default")
-                //         .withLabel("app", deployName) // Assumes pods have a label 'app' with the deployment name
-                //         .list()
-                //         .getItems();
-                // for (Pod pod : pods) k8s.pods().inNamespace("default").withName(pod.getMetadata().getName()).delete();
-
                 k8s.apps().deployments().inNamespace("default").withName(deployName).delete();
                 HashMap<String, String> successMap = new HashMap<>();
-
-                // for (Pod pod : pods) k8s.pods().inNamespace("default").withName(pod.getMetadata().getName()).delete();
 
                 successMap.put("success", "Deploy deleted successfully");
                 return gson.toJson(successMap);
