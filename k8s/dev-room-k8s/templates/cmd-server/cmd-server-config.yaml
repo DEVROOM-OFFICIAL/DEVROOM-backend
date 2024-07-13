@@ -28,7 +28,6 @@ data:
     host_folder_name={{ .Values.host_folder_name }}
     class_folder_name={{ .Values.class_folder_name }}
     student_folder_name={{ .Values.student_folder_name }}
-    # ta_folder_name={{ .Values.ta_folder_name }}
 
     if [ -d "/host/$host_folder_name" ]; then
         echo "Host 볼륨 폴더가 이미 존재합니다."
