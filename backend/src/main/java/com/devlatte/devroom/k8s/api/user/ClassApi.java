@@ -86,8 +86,11 @@ public class ClassApi extends K8sApiBase {
                 try {
                     String ta_path = "/host/"+volumeHostPath+"/"+volumeTaPath+"/"+className;
                     execApi.run("app", cmdServerLabel, new String[]{"/bin/sh", "-c", "mkdir "+ta_path});
+                    execApi.run("app", cmdServerLabel, new String[]{"/bin/sh", "-c", "chmod -R 777 "+ta_path});
+
                     String student_path = "/host/"+volumeHostPath+"/"+volumeStudentPath+"/"+studentId;
                     execApi.run("app", cmdServerLabel, new String[]{"/bin/sh", "-c", "mkdir "+student_path});
+                    execApi.run("app", cmdServerLabel, new String[]{"/bin/sh", "-c", "chmod -R 777 "+student_path});
 
                 } catch (KubernetesClientException | IOException | InterruptedException e) {
                     errorList.put(idName+"-execApi", e.getMessage());
