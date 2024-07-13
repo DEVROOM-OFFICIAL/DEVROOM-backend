@@ -28,7 +28,7 @@ data:
     host_folder_name={{ .Values.host_folder_name }}
     class_folder_name={{ .Values.class_folder_name }}
     student_folder_name={{ .Values.student_folder_name }}
-    ta_folder_name={{ .Values.ta_folder_name }}
+    # ta_folder_name={{ .Values.ta_folder_name }}
 
     if [ -d "/host/$host_folder_name" ]; then
         echo "Host 볼륨 폴더가 이미 존재합니다."
@@ -51,30 +51,6 @@ data:
         echo "student 볼륨 폴더가 생성되었습니다."
     fi
 
-    if [ -d "/host/$host_folder_name/$ta_folder_name" ]; then
-        echo "ta 볼륨 폴더가 이미 존재합니다."
-    else
-        mkdir "/host/$host_folder_name/$ta_folder_name"
-        echo "ta 볼륨 폴더가 생성되었습니다."
-    fi
-
-
-  02_make_test_class.sh: |-
-    #!/bin/bash
-
-    host_folder_name={{ .Values.host_folder_name }}
-    student_folder_name={{ .Values.student_folder_name }}
-
-    {{- range $student := .Values.students }}
-
-    if [ -d "/host/$host_folder_name/$student_folder_name/{{ $student.id }}" ]; then
-            echo "{{ $student.id }} 볼륨 폴더가 이미 존재합니다."
-    else
-        mkdir "/host/$host_folder_name/$student_folder_name/{{ $student.id }}"
-        echo "{{ $student.id }} 볼륨 폴더가 생성되었습니다."
-    fi
-
-    {{- end }}
 
 
 
