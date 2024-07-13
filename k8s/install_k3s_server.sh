@@ -42,10 +42,10 @@ LINE="===================="
 echo "${LINE} Install nfs... ${LINE}"
 read -p "Enter the nfs address: " mynfs
 sudo apt install -y nfs-common >> install.log 2>&1
-sudo mkdir -p /dev-room >> install.log
-sudo mount ${mynfs} /dev-room >> install.log
-sudo chmod -R 777 /dev-room
-ls -al /dev-room
+sudo mkdir -p /nfs_devroom >> install.log
+sudo mount ${mynfs} /nfs_devroom >> install.log
+sudo chmod -R 777 /nfs_devroom
+ls -al /nfs_devroom
 
 # install k8s
 echo "${LINE} Install k3s... ${LINE}"
@@ -106,3 +106,9 @@ helm install dev-room-k8s dev-room-k8s/ >> install.log
 helm ls
 
 sudo cat /var/lib/rancher/k3s/server/node-token > node-token_file
+
+echo "${LINE} API Token... ${LINE}"
+cat api-token_file
+echo "${LINE} Node Token... ${LINE}"
+cat node-token_file
+
