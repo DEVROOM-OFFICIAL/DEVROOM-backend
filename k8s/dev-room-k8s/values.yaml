@@ -8,24 +8,29 @@ vscode_service_port: 8080
 # type of the Service:
 service_type: LoadBalancer
 # name of cmd server
-cmd_server_name: dev-room-cmd-server
+cmd_server_name: devroom-master
 # main persistent volume
-node_name: dev-room-pv
-pv_group: 
-  - name: dev-room-pv
-  - name: ta-data
-  - name: student-data
+# node_name: dev-room-pv
+# pv_group: 
+#   - name: dev-room-pv
+#   - name: ta-data
+#   - name: student-data
 
-pv_capacity: 2Gi
-pv_host_folder_name: dev-room
-pv_student_folder_name: student
-pv_class_folder_name: class
-pv_ta_folder_name: ta
+# pv_capacity: 5Gi
+# pv_host_folder_name: dev-room
+# pv_student_folder_name: student
+# pv_class_folder_name: class
+# pv_ta_folder_name: ta
+
+host_folder_name: dev-room
+student_folder_name: student
+class_folder_name: class
+# ta_folder_name: ta
 
 # test class template
 student_mount_path: "/home"
 
-students:
+# students:
   # - id: "2024000001"
   #   classes:
   #     - name: "JAVA2024"

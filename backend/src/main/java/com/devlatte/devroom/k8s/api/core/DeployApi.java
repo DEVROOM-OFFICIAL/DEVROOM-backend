@@ -86,28 +86,28 @@ public class DeployApi extends K8sApiBase {
         // 기타 볼륨 등록
         for (Map.Entry<String, Map<String, String>> entry : volumes.entrySet()) {
             String volumeName = entry.getKey();
-            String pvClaimName = volumeName + "-claim";
             Map<String, String> volumeDetails = entry.getValue();
-            String pvPath = volumeDetails.get("pvPath");
+            String hostPath = volumeDetails.get("hostPath");
             String mountPath = volumeDetails.get("mountPath");
             boolean isReadOnly = Boolean.parseBoolean(volumeDetails.get("isReadOnly"));
 
             VolumeMount volumeMount = new VolumeMountBuilder()
                     .withName(volumeName)
                     .withMountPath(mountPath)
-                    .withSubPath(pvPath)
+//                    .withSubPath(hostPath)
                     .withReadOnly(isReadOnly)
                     .build();
             volumeMounts.add(volumeMount);
 
             Volume volume = new VolumeBuilder()
                     .withName(volumeName)
-                    .withPersistentVolumeClaim(new PersistentVolumeClaimVolumeSourceBuilder()
-                            .withClaimName(pvClaimName)
-                            .withReadOnly(isReadOnly)
+                    .withHostPath(new HostPathVolumeSourceBuilder()
+                            .withPath("/"+hostPath)
+                            .withType("DirectoryOrCreate")  // 필요에 따라 "Directory", "File" 등으로 설정 가능
                             .build())
                     .build();
             volumesList.add(volume);
+
         }
 
 
@@ -161,16 +161,8 @@ public class DeployApi extends K8sApiBase {
         try {
             if (k8s.apps().deployments().inNamespace("default").withName(deployName).get() != null) {
 
-                List<Pod> pods = k8s.pods().inNamespace("default")
-                        .withLabel("app", deployName) // Assumes pods have a label 'app' with the deployment name
-                        .list()
-                        .getItems();
-                for (Pod pod : pods) k8s.pods().inNamespace("default").withName(pod.getMetadata().getName()).withGracePeriod(0).delete();
-
-                k8s.apps().deployments().inNamespace("default").withName(deployName).withGracePeriod(0).delete();
+                k8s.apps().deployments().inNamespace("default").withName(deployName).delete();
                 HashMap<String, String> successMap = new HashMap<>();
-
-                for (Pod pod : pods) k8s.pods().inNamespace("default").withName(pod.getMetadata().getName()).withGracePeriod(0).delete();
 
                 successMap.put("success", "Deploy deleted successfully");
                 return gson.toJson(successMap);
