@@ -44,10 +44,8 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return http
-                /*
                 .cors(cors->cors.configurationSource(corsConfigurationSource())
                 )
-                */
                 .authorizeHttpRequests(auth ->{
                     auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/", "/error").permitAll()
@@ -77,11 +75,10 @@ public class SecurityConfig {
         return new JwtAuthorizationConverter();
     }
 
-    /*
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://home.devroom.online/onboarding"));
+        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(Arrays.asList("Accept", "Content-Type", "Authorization", "Origin"));
         corsConfiguration.setExposedHeaders(Arrays.asList("Authorization", "Access-Control-Allow-Origin"));
@@ -93,7 +90,6 @@ public class SecurityConfig {
 
         return source;
     }
-    */
 
     private final AccessDeniedHandler accessDeniedHandler = (((request, response, accessDeniedException) -> {
         ObjectMapper objectMapper = new ObjectMapper();
