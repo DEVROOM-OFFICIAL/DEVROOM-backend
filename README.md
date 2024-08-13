@@ -1,23 +1,21 @@
 <div align=center>
-<img width="100%" height="auto" src="https://github.com/Yanghyeondong/DEV-ROOM/assets/37038105/3e2c1862-7e83-42e7-9a8a-98fd9efde307">  
-  
-<br/>  
+<img width="100%" height="auto" src="https://github.com/user-attachments/assets/23a8d4e5-5c99-4da9-b3ae-d7a24643e515"> 
+<br/> 
 <br/>  
 
 <img src="https://img.shields.io/badge/kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white">  
 <img src="https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white">  
-<img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black">  
-
+<img src="https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white">  
+<img src="https://img.shields.io/badge/aws-FF9900?style=for-the-badge&logo=amazonwebservices&logoColor=white">  
 <br/>  
 
-![version](https://img.shields.io/badge/version-1.0-white)
-[![CodeFactor](https://www.codefactor.io/repository/github/yanghyeondong/DEV-ROOM/badge)](https://www.codefactor.io/repository/github/yanghyeondong/DEV-ROOM)
-[![GitHub commit](https://img.shields.io/github/last-commit/Yanghyeondong/DEV-ROOM.svg)](https://github.com/Yanghyeondong/DEV-ROOM/pulse)
+<!-- ![version](https://img.shields.io/badge/version-1.0-white) -->
+<!-- [![GitHub commit](https://img.shields.io/github/last-commit/Yanghyeondong/DEV-ROOM.svg)](https://github.com/Yanghyeondong/DEV-ROOM/pulse) -->
+<!-- [![CodeFactor](https://www.codefactor.io/repository/github/yanghyeondong/DEV-ROOM/badge)](https://www.codefactor.io/repository/github/yanghyeondong/DEV-ROOM) -->
 
 </div>
 
 ## 📌 DevRoom: 교육용 개인 개발 컨테이너 관리 시스템
-<br>
 
 ### 📁 [팀 다큐멘테이션 (Notion)](https://www.notion.so/5e9c20a115e04ca288d6da1729a51be3?v=0f570a3727a1490b83173e6b30a0f1a3)
 
