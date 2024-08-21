@@ -22,6 +22,7 @@
 <br>
 
 
-## Backend 설명R
+## Backend 설명
+![image](https://github.com/Yanghyeondong/DEV-ROOM/assets/37038105/0e887b43-4d76-48c2-a130-86e86cd7135a)
 <br>
 
