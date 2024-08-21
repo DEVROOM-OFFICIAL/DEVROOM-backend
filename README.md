@@ -15,7 +15,7 @@
 
 # 📌 DevRoom Backend
 
-### 📚 [DevRoom 프로젝트 전체 소개](https://github.com/DEVROOM-OFFICIAL/DEVROOM-k8s)
+### 📚 [DevRoom 프로젝트 전체 소개](https://github.com/DEVROOM-OFFICIAL)
 ### - 📙 [DevRoom 프론트엔드 Repo](https://github.com/DEVROOM-OFFICIAL/DEVROOM-frontend)
 ### - 📗 [DevRoom 백엔드 Repo](https://github.com/DEVROOM-OFFICIAL/DEVROOM-backend)
 ### - 📘 [DevRoom K8s 운용 시스템 Repo](https://github.com/DEVROOM-OFFICIAL/DEVROOM-k8s)
@@ -23,6 +23,5 @@
 
 
 ## Backend 설명
-![image](https://github.com/Yanghyeondong/DEV-ROOM/assets/37038105/0e887b43-4d76-48c2-a130-86e86cd7135a)
 <br>
 
