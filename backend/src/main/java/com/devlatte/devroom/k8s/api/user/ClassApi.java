@@ -141,6 +141,12 @@ public class ClassApi extends K8sApiBase {
             labels.put("connection", "ssh");
         }
 
+        // web ssh (wetty) 용 포트개방
+        if (options.containsKey("web_ssh") && options.get("web_ssh").equals("yes")){
+            inPort = "3000";
+            labels.put("connection", "web_ssh");
+        }
+
         if (!labels.containsKey("connection")){
             labels.put("connection", "none");
         }
@@ -172,6 +178,13 @@ public class ClassApi extends K8sApiBase {
         // ssh 설치용 스크립트
         if (options.containsKey("ssh") && options.get("ssh").equals("yes"))
             data.put("01_install_ssh.sh",FreemarkerTemplate.convert("/scripts/", "01_install_ssh.sh", template).replaceAll("\\r", ""));
+
+        // wetty 설치용 스크립트
+        if (options.containsKey("web_ssh") && options.get("web_ssh").equals("yes")) {
+            data.put("01_install_ssh.sh",FreemarkerTemplate.convert("/scripts/", "01_install_ssh.sh", template).replaceAll("\\r", ""));
+            data.put("03_install_wetty.sh",FreemarkerTemplate.convert("/scripts/", "03_install_wetty.sh", template).replaceAll("\\r", ""));
+        }
+
 
         // vscode 설치용 스크립트
         if (options.containsKey("vscode") && options.get("vscode").equals("yes"))
