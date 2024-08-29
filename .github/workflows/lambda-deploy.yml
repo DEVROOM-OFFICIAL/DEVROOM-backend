@@ -38,6 +38,9 @@ jobs:
           aws lambda update-function-code --function-name $FUNCTION_NAME \
           --s3-bucket devroombucket --s3-key lambda_snap/DevRoom-Spring.zip
 
+      - name: Wait for Lambda update 30 seconds
+        run: sleep 30
+
       - name: Update Lambda SnapStart Alias Version
         run: |
           FUNCTION_NAME=devRoomLambda;
