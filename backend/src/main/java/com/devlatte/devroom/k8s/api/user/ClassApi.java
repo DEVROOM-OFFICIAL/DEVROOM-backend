@@ -253,7 +253,7 @@ public class ClassApi extends K8sApiBase {
                 options.getOrDefault("cpuReq", "0.5"),
                 options.getOrDefault("cpuLimit", "1"),
                 options.getOrDefault("memReq", "512Mi"),
-                options.getOrDefault("memLimit", "1Gi"),
+                options.getOrDefault("memLimit", "2Gi"),
                 labels,
                 volumes,
                 defaultCmd
