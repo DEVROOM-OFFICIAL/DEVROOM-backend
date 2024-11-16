@@ -7,10 +7,6 @@
 <img src="https://img.shields.io/badge/aws-FF9900?style=for-the-badge&logo=amazonwebservices&logoColor=white">  
 <br/>  
 
-<!-- ![version](https://img.shields.io/badge/version-1.0-white) -->
-<!-- [![GitHub commit](https://img.shields.io/github/last-commit/Yanghyeondong/DEV-ROOM.svg)](https://github.com/Yanghyeondong/DEV-ROOM/pulse) -->
-<!-- [![CodeFactor](https://www.codefactor.io/repository/github/yanghyeondong/DEV-ROOM/badge)](https://www.codefactor.io/repository/github/yanghyeondong/DEV-ROOM) -->
-
 </div>
 
 # 📌 DevRoom Backend
